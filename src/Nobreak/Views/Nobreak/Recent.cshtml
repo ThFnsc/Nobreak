@@ -1,0 +1,46 @@
+﻿@model List<Nobreak.Context.Entities.NobreakState>
+@inject Nobreak.Services.CachedInfos cachedInfos;
+
+@{
+    ViewData["Title"] = "Nobreak";
+    ViewData["Layout"] = "_Layout";
+}
+
+<table class="mx-auto table table-hover table-striped" id="values-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m[0].Timestamp)</th>
+            <th>@Html.DisplayNameFor(m => m[0].VoltageIn)</th>
+            <th>@Html.DisplayNameFor(m => m[0].VoltageOut)</th>
+            <th>@Html.DisplayNameFor(m => m[0].LoadPercentage)</th>
+            <th>@Html.DisplayNameFor(m => m[0].FrequencyHz)</th>
+            <th>@Html.DisplayNameFor(m => m[0].BatteryVoltage)</th>
+            <th>@Html.DisplayNameFor(m => m[0].BatteryPercentage)</th>
+            <th>@Html.DisplayNameFor(m => m[0].TemperatureC)</th>
+            <th>@Html.DisplayNameFor(m => m[0].PowerState)</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+</table>
+
+@section scripts {
+    <script>
+        const elements = {
+            valuesTable: document.getElementById("values-table"),
+        }
+
+        function displayData(data) {
+            elements.valuesTable.children[1].innerHTML = data.map(v => [formatDate(v.Timestamp), v.VoltageIn + "v", v.VoltageOut + "v", v.LoadPercentage + "%", v.FrequencyHz + "Hz", v.BatteryVoltage + "v", v.BatteryPercentage + "%", v.TemperatureC + "ªC", capitalizeFirstLetters(v.PowerState)].map(v => `<td>${v}</td>`).join("")).map(v => `<tr>${v}</tr>`).join("");
+        }
+
+        displayData(@Html.Raw(await cachedInfos.GetAsync<string>(Nobreak.Services.CachedInfos.ShortTermNobreakStatesJsonIdentifier)));
+
+        setInterval(() => {
+            fetch("/api/v1/recentvalues")
+                .then(r => r.json())
+                .then(displayData);
+        }, 2000);
+    </script>
+}

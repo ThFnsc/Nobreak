@@ -1,0 +1,15 @@
+﻿@inject Nobreak.Services.ReCAPTCHA.IReCaptchaValidator recaptcha
+<input type="hidden" id="recaptcha-token" name="recaptchatoken" />
+<script>
+    function recaptchaOnLoad() {
+        var clientId = grecaptcha.render({
+            badge: "bottomleft",
+            sitekey: "@recaptcha.SiteKey",
+            size: "invisible"
+        })
+        grecaptcha.ready(() =>
+            grecaptcha.execute(clientId, { action: "login" }).then(token =>
+                document.getElementById("recaptcha-token").value = token));
+    }
+</script>
+<script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=recaptchaOnLoad"></script>
