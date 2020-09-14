@@ -1,5 +1,4 @@
 ﻿@model List<Nobreak.Context.Entities.NobreakState>
-@inject Nobreak.Services.CachedInfos cachedInfos;
 
 @{
     ViewData["Title"] = "Nobreak";
@@ -21,7 +20,11 @@
         </tr>
     </thead>
     <tbody>
-        
+        <tr>
+            <td colspan="9">
+                <div class="alert alert-info">Carregando...</div>
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -35,12 +38,13 @@
             elements.valuesTable.children[1].innerHTML = data.map(v => [formatDate(v.Timestamp), v.VoltageIn + "v", v.VoltageOut + "v", v.LoadPercentage + "%", v.FrequencyHz + "Hz", v.BatteryVoltage + "v", v.BatteryPercentage + "%", v.TemperatureC + "ªC", capitalizeFirstLetters(v.PowerState)].map(v => `<td>${v}</td>`).join("")).map(v => `<tr>${v}</tr>`).join("");
         }
 
-        displayData(@Html.Raw(await cachedInfos.GetAsync<string>(Nobreak.Services.CachedInfos.ShortTermNobreakStatesJsonIdentifier)));
-
-        setInterval(() => {
+        function reloadValues() {
             fetch("/api/v1/recentvalues")
                 .then(r => r.json())
                 .then(displayData);
-        }, 2000);
+        }
+
+        reloadValues();
+        setInterval(() => reloadValues(), 2000);
     </script>
 }

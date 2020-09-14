@@ -1,5 +1,4 @@
 ﻿@using Nobreak.Services;
-@inject Nobreak.Services.CachedInfos cachedInfos;
 @model UptimeReport
 
 @{
@@ -33,6 +32,11 @@
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td colspan="9">
+                <div class="alert alert-info">Carregando...</div>
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -56,8 +60,6 @@
             ].map(v => `<td>${v}</td>`).join("")).map(v => `<tr>${v}</tr>`).join("");
         }
 
-        displayData(@Html.Raw(await cachedInfos.GetAsync<string>(Nobreak.Services.CachedInfos.UptimeReportJsonIdentifier)));
-
         function reloadValues() {
             fetch("/api/v1/uptime")
                 .then(r => r.json())
@@ -74,6 +76,7 @@
             });
         }
 
+        reloadValues();
         setInterval(() => reloadValues(), 2000);
     </script>
 }
