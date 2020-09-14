@@ -8,6 +8,7 @@ using Nobreak.Services.Serial;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Nobreak.Controllers
 {
@@ -15,13 +16,13 @@ namespace Nobreak.Controllers
     {
         private readonly NobreakSerialMonitor _nobreak;
         private readonly NobreakContext _context;
-        private readonly CachedInfos _cachedInfos;
+        private readonly IMemoryCache _memoryCache;
 
-        public NobreakController(NobreakSerialMonitor nobreak, NobreakContext context, CachedInfos cachedInfos)
+        public NobreakController(NobreakSerialMonitor nobreak, NobreakContext context, IMemoryCache memoryCache)
         {
             _nobreak = nobreak;
             _context = context;
-            _cachedInfos = cachedInfos;
+            _memoryCache = memoryCache;
         }
 
         public IActionResult Index() =>
@@ -36,7 +37,7 @@ namespace Nobreak.Controllers
         [Authorize]
         public async Task<IActionResult> ToggleOnPurpose(int id)
         {
-            await new APIController(_cachedInfos, _context).ToggleOnPurpose(id);
+            await new APIController(_context, _memoryCache).ToggleOnPurpose(id);
             return RedirectToAction("Events");
         }
     }

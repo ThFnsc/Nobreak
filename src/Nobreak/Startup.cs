@@ -51,6 +51,8 @@ namespace Nobreak
 
             services.AddControllersWithViews();
 
+            services.AddMemoryCache();
+
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
@@ -62,8 +64,6 @@ namespace Nobreak
 
             services.AddDbContext<NobreakContext>(optionsBuilder =>
                 optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default")));
-
-            services.AddSingleton<CachedInfos>();
 
             services.AddHttpClient<IReCaptchaValidator, ReCAPTCHAClient>(client =>
                 client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/"));
