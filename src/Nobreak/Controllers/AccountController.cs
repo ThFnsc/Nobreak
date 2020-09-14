@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Nobreak.Context.Entities;
 
 namespace Nobreak.Controllers
 {
@@ -53,6 +54,16 @@ namespace Nobreak.Controllers
                             return Redirect(returnUrl);
                         else
                             return RedirectToAction("Index", "Home");
+                    }
+                    else if (await _context.Accounts.CountAsync() == 0)
+                    {
+                        _context.Accounts.Add(new Account { 
+                            Email=model.Email,
+                            PasswordHash=PasswordHasher.Hash(model.Password),
+                            Name=model.Email,
+                        });
+                        await _context.SaveChangesAsync();
+                        return await Login(model, returnUrl);
                     }
                     else
                         ViewBag.Error = "Combinação de e-mail e senha incorreta";

@@ -23,4 +23,7 @@ SETx Nobreak_AppSettings:RecaptchaSecret   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 `SerialPort` quando não definido será usado a última porta listada pelo método `SerialPort.GetPortNames()`
 `RecaptchaSiteKey` ou `RecaptchaSecret` quando não definido não incluirá o ReCAPTCHA na tela de login
 
+## Login
+Um usuário será adicionado automaticamente quando for feito um login e não houver nenhum usuário cadastrado no banco de dados
+
 # [Exemplo em produção](https://camilla.thiagofnsc.dev)
