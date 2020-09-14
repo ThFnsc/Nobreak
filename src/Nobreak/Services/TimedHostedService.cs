@@ -11,9 +11,7 @@ namespace Nobreak.Services
     public abstract class TimedHostedService : IHostedService, IDisposable
     {
         private Timer _timer;
-
         private Task _lastRun;
-        
         private readonly ILogger _logger;
 
         public int Count { get; set; } = 0;

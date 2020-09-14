@@ -11,23 +11,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Nobreak.Context.Entities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Nobreak.Services.Serial
 {
     public class NobreakSerialMonitor : TimedHostedService, IDisposable
     {
+        private readonly AppSettings _appSettings;
         private readonly ILogger<NobreakSerialMonitor> _logger;
-        
         private readonly SerialPort _serial;
-        
         private readonly IServiceProvider _serviceProvider;
 
-        public NobreakSerialMonitor(ILogger<NobreakSerialMonitor> logger, IServiceProvider serviceProvider, IConfiguration configuration) : base(logger)
+        public NobreakSerialMonitor(ILogger<NobreakSerialMonitor> logger, IServiceProvider serviceProvider, IOptions<AppSettings> appSettings) : base(logger)
         {
+            _appSettings = appSettings.Value;
             _logger = logger;
-            _serial = new SerialPort(string.IsNullOrWhiteSpace(configuration["Variables:SerialPort"]) 
-                ? SerialPort.GetPortNames().Last() 
-                : configuration["Variables:SerialPort"], 9600);
+            _serial = new SerialPort(_appSettings.SerialPort ?? SerialPort.GetPortNames().Last(), _appSettings.BauldRate ?? 9600);
             _serviceProvider = serviceProvider;
         }
 

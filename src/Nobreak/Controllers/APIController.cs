@@ -17,7 +17,6 @@ namespace Nobreak.Controllers
     public class APIController : ControllerBase
     {
         private readonly CachedInfos _cachedInfos;
-        
         private readonly NobreakContext _context;
 
         public APIController(CachedInfos cachedInfos, NobreakContext context)
