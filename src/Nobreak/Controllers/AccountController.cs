@@ -17,7 +17,6 @@ namespace Nobreak.Controllers
     public class AccountController : Controller
     {
         private readonly IReCaptchaValidator _reCaptchaValidator;
-        
         private readonly NobreakContext _context;
 
         public AccountController(IReCaptchaValidator reCaptchaValidator, NobreakContext context)

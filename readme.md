@@ -6,10 +6,21 @@ Foi usado ASP.NET Core juntamente com o Entity Framework Core.
 O banco de dados configurado nas migrações incluídas foi o MySQL
 
 # Configurações
-As configurações são definidas no appsettings.
-As que requerem atenção:
-## `Variables:SerialPort`
-Essa variável armazenará o nome da porta serial que o app usará para se comunicar com o nobreak. Se não definida, ou vazia, será usada a última porta da lista retornada pelo método `SerialPort.GetPortNames()`.
-  
-  
+
+## Variáveis de ambiente
+
+```
+SETx Nobreak_ConnectionStrings:Default     "server=localhost;port=3306;database=nobreak;user=root;password=root"
+SETx Nobreak_AppSettings:SerialPort        "COM3"
+SETx Nobreak_AppSettings:BauldRate         "9600"
+SETx Nobreak_AppSettings:RecaptchaSiteKey  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+SETx Nobreak_AppSettings:RecaptchaSecret   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+### Padrões
+
+`BauldRate` quando não definido será usado 9600
+`SerialPort` quando não definido será usado a última porta listada pelo método `SerialPort.GetPortNames()`
+`RecaptchaSiteKey` ou `RecaptchaSecret` quando não definido não incluirá o ReCAPTCHA na tela de login
+
 # [Exemplo em produção](https://camilla.thiagofnsc.dev)

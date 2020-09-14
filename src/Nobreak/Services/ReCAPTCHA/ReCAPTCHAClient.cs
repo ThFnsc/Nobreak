@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,27 +13,30 @@ namespace Nobreak.Services.ReCAPTCHA
     public class ReCAPTCHAClient : IReCaptchaValidator
     {
         private readonly HttpClient _httpClient;
-        
-        private readonly IConfiguration _configuration;
+        private readonly AppSettings _appSettings;
 
         public string SiteKey =>
-            _configuration["Variables:RecaptchaSiteKey"];
+            _appSettings.RecaptchaSiteKey;
 
-        public ReCAPTCHAClient(IConfiguration configuration)
+        public bool Ready =>
+            !string.IsNullOrWhiteSpace(_appSettings.RecaptchaSiteKey) && !string.IsNullOrWhiteSpace(_appSettings.RecaptchaSecret);
+
+        public ReCAPTCHAClient(HttpClient httpClient, IOptions<AppSettings> appSettings)
         {
-            _httpClient = new HttpClient();
-            _configuration = configuration;
+            _httpClient = httpClient;
+            _appSettings = appSettings.Value;
         }
 
-        public virtual async Task<bool> Passed(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-                return false;
-            var res = await _httpClient.GetAsync($"https://www.google.com/recaptcha/api/siteverify?secret={_configuration["Variables:RecaptchaSecret"]}&response={token}");
-            if (res.StatusCode != HttpStatusCode.OK)
-                return false;
-            var obj = JsonConvert.DeserializeObject<dynamic>(await res.Content.ReadAsStringAsync());
-            return obj.success == "true" && obj.action == "login";
-        }
+        public async Task<bool> Passed(string token) =>
+            !Ready || (await _httpClient.MakeRequest(new HttpRequest<ReCAPTCHAResponse>
+            {
+                Method = HttpMethod.Get,
+                Path = "siteverify",
+                QueryString = new
+                {
+                    secret = _appSettings.RecaptchaSecret,
+                    response = token
+                }.ConvertToDictionary()
+            })).Ok("login");
     }
 }

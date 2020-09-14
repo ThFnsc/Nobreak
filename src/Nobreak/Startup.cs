@@ -47,6 +47,8 @@ namespace Nobreak
                 return settings;
             };
 
+            services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
+
             services.AddControllersWithViews();
 
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -63,14 +65,8 @@ namespace Nobreak
 
             services.AddSingleton<CachedInfos>();
 
-            if (_currentEnvironment.IsDevelopment())
-            {
-                services.AddSingleton<IReCaptchaValidator, ReCaptchaAllowAll>();
-            }
-            else
-            {
-                services.AddSingleton<IReCaptchaValidator, ReCAPTCHAClient>();
-            }
+            services.AddHttpClient<IReCaptchaValidator, ReCAPTCHAClient>(client =>
+                client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/"));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>

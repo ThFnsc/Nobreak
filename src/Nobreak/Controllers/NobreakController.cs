@@ -14,9 +14,7 @@ namespace Nobreak.Controllers
     public class NobreakController : Controller
     {
         private readonly NobreakSerialMonitor _nobreak;
-        
         private readonly NobreakContext _context;
-        
         private readonly CachedInfos _cachedInfos;
 
         public NobreakController(NobreakSerialMonitor nobreak, NobreakContext context, CachedInfos cachedInfos)
