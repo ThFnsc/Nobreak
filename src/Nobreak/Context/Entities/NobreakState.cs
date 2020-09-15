@@ -97,6 +97,6 @@ namespace Nobreak.Context.Entities
         }
 
         public override string ToString() =>
-            $"Entrada: {VoltageIn}v; Saída: {VoltageOut}v; Potência: {LoadPercentage}%; Frequência: {FrequencyHz}Hz; Bateria: {BatteryVoltage}v; Temperatura: {TemperatureC}ºC; Modo: {PowerState}";
+            $"Id: {Id}; Timestamp: {Timestamp}; Entrada: {VoltageIn}v; Saída: {VoltageOut}v; Potência: {LoadPercentage}%; Frequência: {FrequencyHz}Hz; Bateria: {BatteryVoltage}v; Temperatura: {TemperatureC}ºC; Modo: {PowerState}";
     }
 }
