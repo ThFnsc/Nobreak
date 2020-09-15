@@ -84,7 +84,7 @@ namespace Nobreak.Services
         {
             var report = new UptimeReport
             {
-                RawData = await context.NobreakStateChanges.OrderByDescending(s => s.NobreakState.Timestamp).Include(s => s.NobreakState).ToListAsync()
+                RawData = await context.NobreakStateChanges.AsNoTracking().OrderByDescending(s => s.NobreakState.Timestamp).Include(s => s.NobreakState).ToListAsync()
             }
             .CalculateDurations()
             .CalculateUptimePerIntervals();

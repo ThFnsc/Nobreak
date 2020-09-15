@@ -84,7 +84,7 @@ namespace System
         public static string FirstXChars(this string input, int qtd, string ifExceeds = null) =>
             input == null ? null : (input.Length < qtd ? input : $"{input.Substring(0, qtd)}{ifExceeds ?? string.Empty}");
 
-        public static string ToTemporaryUmblerDomain(this string input) =>
-            $"{input.Replace(".", "-")}.umbler.net";
+        public static byte[] ToByteArray(this string input) =>
+            Encoding.UTF8.GetBytes(input);
     }
 }
