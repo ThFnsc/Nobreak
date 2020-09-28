@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
 using Nobreak.Services;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ namespace System.Net.Http
             if (httpRequest.Body != null)
                 req.Content = httpRequest.SendBodyType switch
                 {
-                    SendBodyTypes.Json => req.Content = new StringContent(httpRequest.Body.ToJSON(), Encoding.UTF8, "application/json"),
+                    SendBodyTypes.Json => req.Content = new StringContent(httpRequest.Body.ToJson(), Encoding.UTF8, "application/json"),
                     SendBodyTypes.URLEncoded => req.Content = new FormUrlEncodedContent(httpRequest.Body.ConvertToDictionary().Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.ToString()))),
                     _ => throw new NotImplementedException(httpRequest.SendBodyType.ToString())
                 };
@@ -42,7 +41,7 @@ namespace System.Net.Http
             TParse Parse<TParse>() where TParse:class =>
                 res.Content.Headers.ContentType.MediaType.ToLower() switch
                 {
-                    "application/json" => JsonConvert.DeserializeObject<TParse>(resBody),
+                    "application/json" => resBody.AsJson<TParse>(),
                     "application/x-www-form-urlencoded" => QueryStringConvert.DeserializeObject<TParse>(resBody),
                     _ => typeof(TParse) == typeof(string) ? resBody as TParse: throw new NotImplementedException($"O mediatype {res.Content.Headers.ContentType} não é suportado")
                         .AddData("Request", httpRequest)

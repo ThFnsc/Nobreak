@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Nobreak.Extensions
 {
     public class TimespanConverter : JsonConverter<TimeSpan>
     {
-        public override TimeSpan ReadJson(JsonReader reader, Type objectType, [AllowNull] TimeSpan existingValue, bool hasExistingValue, JsonSerializer serializer) =>
-            TimeSpan.FromSeconds(double.Parse(reader.Value.ToString()));
+        public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+            TimeSpan.FromSeconds(reader.GetDouble());
 
-        public override void WriteJson(JsonWriter writer, [AllowNull] TimeSpan value, JsonSerializer serializer) =>
-            writer.WriteValue(value.TotalSeconds);
+        public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options) =>
+            writer.WriteNumberValue(value.TotalSeconds);
     }
 }

@@ -6,74 +6,19 @@
     ViewData["Layout"] = "_Layout";
 }
 
-<style>
-    a{
-        cursor: pointer;
-    }
-</style>
-
-<h2>Uptime</h2>
-<table class="mx-auto table table-hover table-striped" id="uptime-table">
-    <thead>
-
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-<h2>Eventos</h2>
-<table class="mx-auto table table-hover table-striped" id="events-table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.RawData[0].NobreakState.Timestamp)</th>
-            <th>@Html.DisplayNameFor(m => m.RawData[0].NobreakState.TimeAgo)</th>
-            <th>@Html.DisplayNameFor(m => m.RawData[0].NobreakState.PowerState)</th>
-            <th>Duração</th>
-            <th>@Html.DisplayNameFor(m => m.RawData[0].OnPurpose)</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td colspan="9">
-                <div class="alert alert-info">Carregando...</div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div id="values-table" class="container">
+    <div class="alert alert-primary">Carregando...</div>
+</div>
 
 @section scripts { 
     <script>
-        const elements = {
-            uptimeTable: document.getElementById("uptime-table"),
-            eventsTable: document.getElementById("events-table")
-        }
-
-        function displayData(data) {
-            elements.uptimeTable.children[0].innerHTML = `<tr>${["Span", ...data.PossibleStates].map(s => `<th>${capitalizeFirstLetters(s)}</th>`).join("\n")}</tr>`;
-            elements.uptimeTable.children[1].innerHTML = data.UptimePerIntervals.map(s => [displaySeconds(s.TimeSpan), ...s.UptimeStates.map(u => `${displaySeconds(u.ShareTimespan)} (${u.SharePercentage.toFixed(5)}%)`)].map(s => `<td>${s}</td>`).join("")).map(s => `<tr>${s}</tr>`).join("");
-
-            elements.eventsTable.children[1].innerHTML = data.RawData.map(v => [
-                formatDate(v.NobreakState.Timestamp),
-                displaySeconds(v.NobreakState.TimeAgo),
-                `<span class="badge badge-${v.NobreakState.PowerState == "grid" ? "success" : "danger"}">${capitalizeFirstLetters(v.NobreakState.PowerState)}</span>`,
-                displaySeconds(v.Duration),
-                v.NobreakState.PowerState == "grid" ? "-" : `<a onclick="makeRequest('/Nobreak/ToggleOnPurpose/${v.Id}')"><span class="badge badge-${v.OnPurpose ? "success" : "danger"}">${simNao(v.OnPurpose)}</span></a>`
-            ].map(v => `<td>${v}</td>`).join("")).map(v => `<tr>${v}</tr>`).join("");
+        function toggleOnPurpose(id) {
+            fetch(`/api/v1/ToggleOnPurpose/${id}`)
+                .then(() => reloadValues());
         }
 
         function reloadValues() {
-            fetch("/api/v1/uptime")
-                .then(r => r.json())
-                .then(displayData);
-        }
-
-        function makeRequest(url) {
-            fetch(url).then(res => {
-                console.log(res);
-                if (res.redirected && res.url.includes("/Account/Login"))
-                    window.location.href = res.url;
-                else
-                    reloadValues();
-            });
+            loadTo("/Nobreak/_EventsTable", "#values-table");
         }
 
         reloadValues();

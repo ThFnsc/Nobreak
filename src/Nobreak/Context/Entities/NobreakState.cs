@@ -1,12 +1,11 @@
-﻿using Nobreak.Extensions;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Nobreak.Context.Entities
 {
@@ -36,7 +35,7 @@ namespace Nobreak.Context.Entities
         [NotMapped]
         public float BatteryPercentage =>
             PowerState == PowerStates.Grid
-                ? BatteryVoltage.Map(23.8f, 27.4f, 0, 100, true)
+                ? BatteryVoltage.Map(23.8f, 26.99f, 0, 100, true)
                 : BatteryVoltage.Map(20.0f, 24.4f, 0, 100, true);
 
         [Display(Name = "Temperatura")]
@@ -63,7 +62,7 @@ namespace Nobreak.Context.Entities
         public byte Extras { get; set; }
 
         [NotMapped]
-        [JsonConverter(typeof(TimespanConverter))]
+        [JsonIgnore]
         [Display(Name = "Há")]
         public TimeSpan TimeAgo =>
             DateTime.Now - Timestamp;

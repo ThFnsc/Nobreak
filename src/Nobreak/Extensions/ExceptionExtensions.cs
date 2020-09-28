@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,7 +10,7 @@ namespace System
             exception == null
             ? "null"
             : $"{exception.GetType().FullName}: {exception.Message}" +
-            $"\n\nException data: {JsonConvert.SerializeObject((object)exception.Data ?? new { }, Formatting.Indented)}" +
+            $"\n\nException data: {((object)exception.Data ?? new { }).ToJson(true)}" +
             $"\n\nStack trace: {exception.StackTrace}" +
             $"\n\nInner exception: {exception.InnerException.Detailed()}";
 
@@ -20,7 +19,7 @@ namespace System
             ? "null"
             : $"{exception.GetType().FullName}: {exception.Message}".ToSlackCodeLine() +
             $"\n\nException data: \n"
-                + JsonConvert.SerializeObject((object)exception.Data ?? new { }, Formatting.Indented).ToSlackCodeBlock() +
+                + ((object)exception.Data ?? new { }).ToJson(true).ToSlackCodeBlock() +
             $"\n\nStack trace: \n" +
                 exception.StackTrace.ToSlackQuote() +
             $"\n\nInner exception: {exception.InnerException.DetailedSlack()}";

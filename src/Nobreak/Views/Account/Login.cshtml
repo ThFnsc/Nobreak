@@ -7,6 +7,7 @@
 
 @using (Html.BeginForm(FormMethod.Post))
 {
+    @await Html.PartialAsync("_ModelStateAlert")
     <p class="h4">Olá!</p>
     <p class="h6">Vamos começar com os seus dados 😉</p>
     <div class="form-group">
@@ -20,11 +21,7 @@
         @Html.ValidationMessageFor(l => l.Password)
     </div>
     <button type="submit" class="btn btn-primary btn-block my-2">Entrar</button>
-    @await Html.PartialAsync("_ReCaptcha")
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-warning mt-3" role="alert">@Html.Raw(ViewBag.Error)</div>
-    }
+    @await Html.PartialAsync("_ReCaptcha", Model)
 }
 
 @section Scripts {

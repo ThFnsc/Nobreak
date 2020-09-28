@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace System
@@ -86,5 +87,8 @@ namespace System
 
         public static byte[] ToByteArray(this string input) =>
             Encoding.UTF8.GetBytes(input);
+
+        public static T AsJson<T>(this string input) =>
+            JsonSerializer.Deserialize<T>(input);
     }
 }

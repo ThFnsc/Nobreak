@@ -38,38 +38,35 @@ namespace Nobreak.Controllers
                 : View();
 
         [HttpPost]
+        [ReCaptchaChallenge(InvalidTokenErrorMessage = "Não foi possível confirmar que você não é um robô. Tente novamente, por favor 🤖")]
         public async Task<IActionResult> Login(LoginModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
-                if (await _reCaptchaValidator.Passed(model.ReCaptchaToken))
+                var user = await _context.Accounts.SingleOrDefaultAsync(usr => usr.Email.ToLower() == model.Email.ToLower());
+                if (user != null && PasswordHasher.Check(model.Password, user.PasswordHash))
                 {
-                    var user = await _context.Accounts.SingleOrDefaultAsync(usr => usr.Email.ToLower() == model.Email.ToLower());
-                    if (user != null && PasswordHasher.Check(model.Password, user.PasswordHash))
-                    {
-                        var principal = new ClaimsPrincipal(new ClaimsIdentity(user.Claims(), CookieAuthenticationDefaults.AuthenticationScheme));
-                        await HttpContext.SignInAsync(principal);
-                        HttpContext.User = principal;
-                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                            return Redirect(returnUrl);
-                        else
-                            return RedirectToAction("Index", "Home");
-                    }
-                    else if (await _context.Accounts.CountAsync() == 0)
-                    {
-                        _context.Accounts.Add(new Account { 
-                            Email=model.Email,
-                            PasswordHash=PasswordHasher.Hash(model.Password),
-                            Name=model.Email,
-                        });
-                        await _context.SaveChangesAsync();
-                        return await Login(model, returnUrl);
-                    }
+                    var principal = new ClaimsPrincipal(new ClaimsIdentity(user.Claims(), CookieAuthenticationDefaults.AuthenticationScheme));
+                    await HttpContext.SignInAsync(principal);
+                    HttpContext.User = principal;
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        return Redirect(returnUrl);
                     else
-                        ViewBag.Error = "Combinação de e-mail e senha incorreta";
+                        return RedirectToAction("Index", "Home");
+                }
+                else if (await _context.Accounts.CountAsync() == 0)
+                {
+                    _context.Accounts.Add(new Account
+                    {
+                        Email = model.Email,
+                        PasswordHash = PasswordHasher.Hash(model.Password),
+                        Name = model.Email,
+                    });
+                    await _context.SaveChangesAsync();
+                    return await Login(model, returnUrl);
                 }
                 else
-                    ViewBag.Error = "Não foi possível confirmar que você não é um robô 🤖<br>Tente novamente, por favor";
+                    ModelState.AddModelError(nameof(Login), "Combinação de e-mail e senha incorreta");
             }
             return View(model);
         }

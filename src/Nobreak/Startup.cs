@@ -18,9 +18,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Text.Json.Serialization;
+using Nobreak.Extensions;
 
 namespace Nobreak
 {
@@ -39,26 +39,22 @@ namespace Nobreak
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            JsonConvert.DefaultSettings = () =>
-            {
-                var settings = new JsonSerializerSettings();
-                settings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
-                settings.Formatting = Formatting.Indented;
-                return settings;
-            };
+            services.Configure<KestrelServerOptions>(options =>
+                options.AllowSynchronousIO = true);
 
             services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                    options.JsonSerializerOptions.Converters.AddRange(new JsonStringEnumConverter(), new TimespanConverter()));
 
             services.AddMemoryCache();
 
             services.Configure<ForwardedHeadersOptions>(options =>
-            {
                 options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-            });
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost);
 
+            services.AddSingleton<INobreakProvider, NobreakLogic>();
             services.AddSingleton<NobreakSerialMonitor>();
             services.AddHostedService(provider => provider.GetService<NobreakSerialMonitor>());
 
@@ -100,14 +96,7 @@ namespace Nobreak
 
             app.UseAuthorization();
 
-            app.Use(async (context, next) =>
-            {
-                DateTime start = DateTime.Now;
-                var user = context.User.Identity.IsAuthenticated ? context.User.FindFirst(ClaimTypes.Name).Value : "Anonymous user";
-                logger.LogInformation($"{user} made a {context.Request.Scheme} {context.Request.Method} request to {context.Request.Path} from the IP {context.Request.Headers["X-Forwarded-For"]}");
-                await next();
-                logger.LogInformation($"{user}'s {context.Request.Method} request to {context.Request.Path} ended with status code {context.Response.StatusCode}. Took {(DateTime.Now - start).TotalSeconds}s");
-            });
+            app.UseRequestLogging(logger);
 
             app.UseEndpoints(endpoints =>
             {
