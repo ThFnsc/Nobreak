@@ -26,4 +26,4 @@ SETx Nobreak_AppSettings:RecaptchaSecret   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ## Login
 Um usuário será adicionado automaticamente quando for feito um login e não houver nenhum usuário cadastrado no banco de dados
 
-# [Exemplo em produção](https://camilla.thiagofnsc.dev)
+# [Exemplo em produção](https://nobreak.thiagofnsc.dev)
