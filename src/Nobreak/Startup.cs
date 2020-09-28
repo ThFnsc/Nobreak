@@ -61,7 +61,7 @@ namespace Nobreak
             services.AddDbContext<NobreakContext>(optionsBuilder =>
                 optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default")));
 
-            services.AddHttpClient<IReCaptchaValidator, ReCAPTCHAClient>(client =>
+            services.AddHttpClient<IReCaptchaValidator, ReCaptchaClient>(client =>
                 client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/"));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

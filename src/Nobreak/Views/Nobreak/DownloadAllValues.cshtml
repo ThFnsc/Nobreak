@@ -9,18 +9,20 @@
     @using (Html.BeginForm(FormMethod.Post, new { id="form-download" }))
     {
         @await Html.PartialAsync("_ModelStateAlert")
-        <button class="btn btn-block btn-warning btn-lg">Baixar (<span id="counter">5</span>)</button>
+        <button class="btn btn-block btn-warning btn-lg" onclick="downloaded=true">Baixar (<span id="counter">5</span>)</button>
         @await Html.PartialAsync("_ReCaptcha", Model)
     }
 </div>
 
 @section Scripts {
     <script>
+        var downloaded;
         async function download() {
             for (var i = 4; i >= 0; i--) {
                 await delay(1000);
                 document.getElementById("counter").innerText = i;
             }
+            if(!downloaded)
             $("#form-download").submit();
         }
 

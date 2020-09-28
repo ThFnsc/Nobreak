@@ -1,6 +1,6 @@
 ﻿@model Nobreak.Services.ReCAPTCHA.IReCaptchaRequired
 @inject Nobreak.Services.ReCAPTCHA.IReCaptchaValidator recaptcha
-<input type="hidden" id="recaptcha-token" name="recaptchatoken" />
+@Html.HiddenFor(m=>m.ReCaptchaToken)
 <script>
     function recaptchaOnLoad() {
         var clientId = grecaptcha.render({
@@ -10,7 +10,7 @@
         })
         grecaptcha.ready(() =>
             grecaptcha.execute(clientId, { action: "login" }).then(token =>
-                document.getElementById("recaptcha-token").value = token));
+                document.getElementById("@Html.IdFor(m=>m.ReCaptchaToken)").value = token));
     }
 </script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=recaptchaOnLoad"></script>

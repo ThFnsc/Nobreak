@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Nobreak.Services.ReCAPTCHA
 {
@@ -9,6 +10,7 @@ namespace Nobreak.Services.ReCAPTCHA
         public string Action { get; set; }
         public DateTime Challenge_ts { get; set; }
         public string Hostname { get; set; }
+        [JsonPropertyName("error-codes")]
         public string[] ErrorCodes { get; set; }
 
         internal bool Ok(string action) =>
