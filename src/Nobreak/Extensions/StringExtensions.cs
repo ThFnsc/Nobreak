@@ -89,6 +89,6 @@ namespace System
             Encoding.UTF8.GetBytes(input);
 
         public static T AsJson<T>(this string input) =>
-            JsonSerializer.Deserialize<T>(input);
+            JsonSerializer.Deserialize<T>(input, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }
