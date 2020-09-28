@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace System
@@ -16,5 +17,14 @@ namespace System
 
         public static T After<T>(this IList<T> list, T target) =>
             list.RelativeTo(target, 1);
+
+        public static IList<T> AddRange<T>(this IList<T> list, params T[] items) =>
+            list.AddRange(items.AsEnumerable());
+
+        public static IList<T> AddRange<T>(this IList<T> list, IEnumerable<T> items)
+        {
+            items.ForEach(list.Add);
+            return list;
+        }
     }
 }

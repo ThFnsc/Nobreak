@@ -2,7 +2,6 @@
 using Nobreak.Entities;
 using Nobreak.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +94,6 @@ namespace Nobreak.Services
         {
             public DateTime Since { get; set; }
             
-            [JsonConverter(typeof(TimespanConverter))]
             public TimeSpan TimeSpan { get; set; }
 
             public List<UptimeState> UptimeStates { get; set; }
@@ -104,7 +102,6 @@ namespace Nobreak.Services
             {
                 public NobreakState.PowerStates PowerState { get; set; }
                 
-                [JsonConverter(typeof(TimespanConverter))]
                 public TimeSpan ShareTimespan { get; set; }
                 
                 public double SharePercentage { get; set; }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace System
@@ -12,8 +13,12 @@ namespace System
         public static List<KeyValuePair<string, object>> GetKeyValuePairs(this object input) =>
             input.GetType().GetProperties().Select(prop => new KeyValuePair<string, object>(prop.Name, prop.GetValue(input))).ToList();
 
-        public static string ToJSON(this object input) =>
-            JsonConvert.SerializeObject(input);
+        public static string ToJson(this object input, bool indented = false)
+        {
+            var options = new JsonSerializerOptions { WriteIndented = indented };
+            options.Converters.Add(new JsonStringEnumConverter());
+            return JsonSerializer.Serialize(input, options);
+        }
 
         public static IDictionary<string, object> ConvertToDictionary(this object input)
         {

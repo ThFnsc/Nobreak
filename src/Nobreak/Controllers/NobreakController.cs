@@ -2,27 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nobreak.Entities;
 using Nobreak.Services;
-using Nobreak.Services.Serial;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Nobreak.Models;
+using System.Web;
+using System.Net.Http.Headers;
+using Nobreak.Services.ReCAPTCHA;
 
 namespace Nobreak.Controllers
 {
     public class NobreakController : Controller
     {
-        private readonly NobreakSerialMonitor _nobreak;
-        private readonly NobreakContext _context;
-        private readonly IMemoryCache _memoryCache;
+        private readonly INobreakProvider _nobreakProvider;
 
-        public NobreakController(NobreakSerialMonitor nobreak, NobreakContext context, IMemoryCache memoryCache)
+        public NobreakController(INobreakProvider nobreakProvider)
         {
-            _nobreak = nobreak;
-            _context = context;
-            _memoryCache = memoryCache;
+            _nobreakProvider = nobreakProvider;
         }
 
         public IActionResult Index() =>
@@ -34,11 +29,33 @@ namespace Nobreak.Controllers
         public IActionResult Events() =>
             View();
 
-        [Authorize]
-        public async Task<IActionResult> ToggleOnPurpose(int id)
+        public async Task<IActionResult> _EventsTable()
         {
-            await new APIController(_context, _memoryCache).ToggleOnPurpose(id);
-            return RedirectToAction("Events");
+            var uptime = await _nobreakProvider.GetUptimeReportAsync();
+            return PartialView(uptime);
+        }
+
+        public async Task<IActionResult> _RecentValuesTable()
+        {
+            var recentValues = await _nobreakProvider.GetRecentValuesAsync();
+            return PartialView(recentValues);
+        }
+
+        [HttpGet]
+        public IActionResult DownloadAllValues() =>
+            View();
+
+        [HttpPost]
+        [ReCaptchaChallenge(InvalidTokenErrorMessage = "Não foi possível confirmar que você não é um robô. Tente novamente, por favor 🤖")]
+        public IActionResult DownloadAllValues(DownloadAllValuesViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var date = HttpUtility.UrlEncode(DateTime.Now.ToISOString());
+                return new FileCallbackResult(new MediaTypeHeaderValue("application/octet-stream"), $"{date}-dump.zip", async (stream, _) =>
+                    await _nobreakProvider.GetAllValuesAsync(stream, $"{date}-dump.json"));
+            }
+            return View(model);
         }
     }
 }

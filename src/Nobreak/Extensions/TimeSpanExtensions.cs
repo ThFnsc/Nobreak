@@ -9,17 +9,52 @@ namespace System
 {
     public static class TimeSpanExtensions
     {
+        private static KeyValuePair<string, double>[] TIME_UNITS;
+
         private static string ShowIfGreaterThanZero(this int input, string suffix) =>
             input > 0
                 ? $"{input}{suffix}"
                 : string.Empty;
-        public static string Format(this TimeSpan span, bool seconds = false) =>
-            span.TotalSeconds< 0 
-                ? $"-{span.Multiply(-1).Format(seconds)}"
-                : (((int)span.TotalDays).ShowIfGreaterThanZero("d ") +
-                span.Hours.ShowIfGreaterThanZero("h ") +
-                span.Minutes.ShowIfGreaterThanZero("m ") +
-                (seconds ? $"{span.Seconds}s" : string.Empty)).Trim();
+
+        public static string Format(this TimeSpan span)
+        {
+            if(TIME_UNITS == null)
+            {
+                TIME_UNITS = new Dictionary<string, double>
+                {
+                    { "s", 1 },
+                    { "m", 60 },
+                    { "h", 60 },
+                    { "d", 24 },
+                    { "w", 7 },
+                    { "mo", (365.25/12)/7 },
+                    { "y", 12 },
+                    { "dec", 10 },
+                    { "c", 10 }
+                }.ToArray();
+                for (var i = 1; i < TIME_UNITS.Length; i++)
+                    TIME_UNITS[i] = new KeyValuePair<string, double>(TIME_UNITS[i].Key, TIME_UNITS[i].Value * TIME_UNITS[i - 1].Value);
+            }
+
+            var seconds = span.TotalSeconds;
+
+            if (seconds < 0)
+                return $"-({span.Multiply(-1).Format()})";
+
+            var values = new List<string>();
+            for (var i = TIME_UNITS.Length - 1; i >= 0; i--)
+            {
+                var result = Math.Floor(seconds / TIME_UNITS[i].Value);
+                if (result >= 1)
+                {
+                    seconds %= TIME_UNITS[i].Value;
+                    values.Add($"{result}{TIME_UNITS[i].Key}");
+                }
+            }
+            if (values.Count == 0)
+                values.Add($"0{TIME_UNITS.First().Key}");
+            return string.Join(" ", values);
+        }
 
         public static string ToAmPm(this TimeSpan input, bool seconds = false) =>
             $"{(input.Hours == 0 ? input.Add(TimeSpan.FromHours(12)) : (input.Hours > 12 ? input.Subtract(TimeSpan.FromHours(12)) : input)).ToString($"hh\\:mm{(seconds ? "\\:ss" : "")}")} {(input.Hours < 12 ? "am" : "pm")}";

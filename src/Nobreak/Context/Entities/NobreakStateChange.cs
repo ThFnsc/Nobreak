@@ -1,11 +1,11 @@
 ﻿using Nobreak.Extensions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Nobreak.Context.Entities
 {
@@ -18,7 +18,7 @@ namespace Nobreak.Context.Entities
             OnPurpose ? NobreakState.PowerStates.Grid : NobreakState.PowerState;
 
         [NotMapped]
-        [JsonConverter(typeof(TimespanConverter))]
+        [Display(Name = "Duração")]
         public TimeSpan Duration { get; set; }
 
         [Required]

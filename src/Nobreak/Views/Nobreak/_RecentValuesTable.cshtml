@@ -1,0 +1,31 @@
+﻿@model List<Nobreak.Context.Entities.NobreakState>
+
+<table class="mx-auto table table-hover table-striped" id="values-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m[0].Timestamp)</th>
+            <th>@Html.DisplayNameFor(m => m[0].PowerState)</th>
+            <th>@Html.DisplayNameFor(m => m[0].VoltageIn)</th>
+            <th>@Html.DisplayNameFor(m => m[0].VoltageOut)</th>
+            <th>@Html.DisplayNameFor(m => m[0].LoadPercentage)</th>
+            <th>@Html.DisplayNameFor(m => m[0].FrequencyHz)</th>
+            <th>@Html.DisplayNameFor(m => m[0].BatteryVoltage)</th>
+            <th>@Html.DisplayNameFor(m => m[0].TemperatureC)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var state in Model)
+        {
+        <tr>
+            <td>@(state.Timestamp.Format()) (há @state.TimeAgo.Format())</td>
+            <td>@(state.PowerState)</td>
+            <td>@(state.VoltageIn)v</td>
+            <td>@(state.VoltageOut)v</td>
+            <td>@(state.LoadPercentage)%</td>
+            <td>@(state.FrequencyHz)hz</td>
+            <td>@(state.BatteryVoltage)v (@(state.BatteryPercentage)%)</td>
+            <td>@(state.TemperatureC)ºC</td>
+        </tr>
+        }
+    </tbody>
+</table>

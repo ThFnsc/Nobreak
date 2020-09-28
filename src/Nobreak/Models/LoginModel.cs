@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Nobreak.Services.ReCAPTCHA;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nobreak.Models
 {
-    public class LoginModel
+    public class LoginModel : IReCaptchaRequired
     {
         [Required(ErrorMessage = "O campo é obrigatório")]
         [Display(Name = "E-mail")]

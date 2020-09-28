@@ -1,0 +1,66 @@
+﻿@using Nobreak.Services;
+@model UptimeReport
+
+<style>
+    a {
+        cursor: pointer;
+    }
+</style>
+
+<h2>Uptime</h2>
+<table class="mx-auto table table-hover table-striped" id="uptime-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.UptimePerIntervals[0].TimeSpan)</th>
+            @foreach(var possibleState in Model.PossibleStates)
+            {
+                <th>@possibleState</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var interval in Model.UptimePerIntervals)
+        {
+            <tr>
+                <td>@interval.TimeSpan.Format()</td>
+                @foreach(var state in interval.UptimeStates)
+                {
+                    <td>@state.ShareTimespan.Format() (@state.SharePercentage.ToString("0.0000")%)</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+<h2>Eventos</h2>
+<table class="mx-auto table table-hover table-striped" id="events-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.RawData[0].NobreakState.PowerState)</th>
+            <th>@Html.DisplayNameFor(m => m.RawData[0].NobreakState.Timestamp)</th>
+            <th>@Html.DisplayNameFor(m => m.RawData[0].Duration)</th>
+            <th>@Html.DisplayNameFor(m => m.RawData[0].OnPurpose)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var powerEvent in Model.RawData)
+        {
+        <tr>
+            <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.NobreakState.PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState</span></td>
+            <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
+            <td>@powerEvent.Duration.Format()</td>
+            <td>
+                @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.NobreakState.PowerStates.Battery)
+                {
+                    <a onclick="@(User.Identity.IsAuthenticated ? $"toggleOnPurpose({powerEvent.Id})" : "window.location.href=`/Account/Login?returnUrl=${encodeURIComponent(window.location.pathname)}`")">
+                        <span class="badge badge-@(powerEvent.OnPurpose ? "success" : "danger")">@powerEvent.OnPurpose.SimNao()</span>
+                    </a>
+                }
+                else
+                {
+                    <text>-</text>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

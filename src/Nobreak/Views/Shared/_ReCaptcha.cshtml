@@ -1,8 +1,7 @@
-﻿@inject Nobreak.Services.ReCAPTCHA.IReCaptchaValidator recaptcha
-@if (recaptcha.Ready)
-{
-    <input type="hidden" id="recaptcha-token" name="recaptchatoken" />
-    <script>
+﻿@model Nobreak.Services.ReCAPTCHA.IReCaptchaRequired
+@inject Nobreak.Services.ReCAPTCHA.IReCaptchaValidator recaptcha
+<input type="hidden" id="recaptcha-token" name="recaptchatoken" />
+<script>
     function recaptchaOnLoad() {
         var clientId = grecaptcha.render({
             badge: "bottomleft",
@@ -13,6 +12,5 @@
             grecaptcha.execute(clientId, { action: "login" }).then(token =>
                 document.getElementById("recaptcha-token").value = token));
     }
-    </script>
-    <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=recaptchaOnLoad"></script>
-}
+</script>
+<script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=recaptchaOnLoad"></script>
