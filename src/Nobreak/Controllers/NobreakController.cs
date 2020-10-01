@@ -50,11 +50,9 @@ namespace Nobreak.Controllers
         public IActionResult DownloadAllValues(DownloadAllValuesViewModel model)
         {
             if (ModelState.IsValid)
-            {
-                var date = HttpUtility.UrlEncode(DateTime.Now.ToISOString());
-                return new FileCallbackResult(new MediaTypeHeaderValue("application/octet-stream"), $"{date}-dump.zip", async (stream, _) =>
-                    await _nobreakProvider.GetAllValuesAsync(stream, $"{date}-dump.json"));
-            }
+                return new FileCallbackResult(new MediaTypeHeaderValue("application/octet-stream"), 
+                    $"{HttpUtility.UrlEncode(DateTime.Now.ToISOString())}-dump.zip", async (stream, _) =>
+                        await _nobreakProvider.GetAllValuesAsync(stream));
             return View(model);
         }
     }

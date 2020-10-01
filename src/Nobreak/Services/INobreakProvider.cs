@@ -13,7 +13,7 @@ namespace Nobreak.Services
         
         Task<List<NobreakState>> GetRecentValuesAsync();
 
-        Task GetAllValuesAsync(Stream writeTo, string fileName);
+        Task GetAllValuesAsync(Stream writeTo);
         
         void ClearCache();
         

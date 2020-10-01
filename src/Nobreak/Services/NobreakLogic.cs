@@ -3,12 +3,14 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Nobreak.Context.Entities;
 using Nobreak.Entities;
+using Nobreak.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Nobreak.Services
@@ -41,14 +43,23 @@ namespace Nobreak.Services
                     .ToListAsync();
             }, TimeSpan.FromSeconds(2));
 
-        public async Task GetAllValuesAsync(Stream writeTo, string fileName)
+        public async Task GetAllValuesAsync(Stream writeTo)
         {
-            using var scope = _serviceProvider.CreateScope();
-            using var context = scope.ServiceProvider.GetRequiredService<NobreakContext>();
             using var zip = new ZipArchive(writeTo, ZipArchiveMode.Create, false);
-            var entryItem = zip.CreateEntry(fileName, CompressionLevel.Optimal);
-            using var entryStream = entryItem.Open();
-            await JsonSerializer.SerializeAsync(entryStream, context.NobreakStates.AsNoTracking());
+
+            async Task SerializeTo<T>(string name, Func<NobreakContext, IQueryable<T>> source)
+            {
+                var changesEntry = zip.CreateEntry(name, CompressionLevel.Optimal);
+                using var scope = _serviceProvider.CreateScope();
+                using var context = scope.ServiceProvider.GetRequiredService<NobreakContext>();
+                using var changesStream = changesEntry.Open();
+                var jsonSettings = new JsonSerializerOptions();
+                jsonSettings.Converters.AddRange(new JsonStringEnumConverter(), new TimespanConverter());
+                await JsonSerializer.SerializeAsync(changesStream, source(context), jsonSettings);
+            }
+
+            await SerializeTo($"changes.json", context => context.NobreakStateChanges.Include(s => s.NobreakState).AsNoTracking());
+            await SerializeTo($"readings.json", context => context.NobreakStates.AsNoTracking());
         }
 
         public void ClearCache()
