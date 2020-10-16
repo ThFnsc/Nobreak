@@ -46,7 +46,7 @@ namespace Nobreak.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e.Detailed());
+                    _logger.LogError(e, $"Error in service {GetType().Name}");
                 }
             }, null, InitialDelay, Interval);
             return Task.CompletedTask;
