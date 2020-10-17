@@ -31,7 +31,7 @@ namespace Nobreak.Services.Serial
 
             var serialPorts = SerialPort.GetPortNames();
             _logger.LogInformation("Portas seriais encontradas: {SerialPorts}", string.Join(", ", serialPorts));
-            var chosenSerialPort = _appSettings.SerialPort ?? serialPorts.Last();
+            var chosenSerialPort = _appSettings.SerialPort ?? serialPorts.LastOrDefault();
             if (string.IsNullOrWhiteSpace(chosenSerialPort))
                 _logger.LogWarning("Nenhuma porta serial escolhida/encontrada");
             else
