@@ -1,4 +1,3 @@
-using Nobreak.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace Nobreak.Tests
         }
 
         private string RandomString() =>
-            Helpers.RandomBase64(_random.Next(10, 32));
+            Infra.Services.Helpers.RandomBase64(_random.Next(10, 32));
 
         [TestMethod]
         public void ShouldPredictEqualitiesCorrectly()
@@ -33,21 +32,23 @@ namespace Nobreak.Tests
                     Assert.IsTrue((HashedValue)password1 == password2 == (password1 == password2));
         }
 
+        [TestMethod]
         public void ShouldBeSerializableAndParseable()
         {
             var value = RandomString();
             HashedValue hashed = value;
             var copy = HashedValue.ParseFromHash(hashed.ToString());
             Assert.AreEqual(hashed, copy);
-            Assert.AreEqual(value, copy);
+            Assert.AreEqual(copy, value);
         }
 
+        [TestMethod]
         public void ShouldBeVersatile()
         {
             var value = RandomString();
             var differentValue = value + "-";
             HashedValue hashed = value;
-            Assert.AreEqual(value, hashed);
+            Assert.AreEqual(hashed, value);
             Assert.AreNotEqual(differentValue, hashed);
 
             Assert.IsTrue(value == hashed);

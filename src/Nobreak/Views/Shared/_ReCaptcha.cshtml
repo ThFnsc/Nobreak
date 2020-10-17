@@ -1,5 +1,5 @@
-﻿@model Nobreak.Services.ReCAPTCHA.IReCaptchaRequired
-@inject Nobreak.Services.ReCAPTCHA.IReCaptchaValidator recaptcha
+﻿@model Nobreak.Infra.Services.ReCaptcha.IReCaptchaRequired
+@inject Nobreak.Infra.Services.ReCaptcha.IReCaptchaValidator recaptcha
 @Html.HiddenFor(m=>m.ReCaptchaToken)
 <script>
     function recaptchaOnLoad() {

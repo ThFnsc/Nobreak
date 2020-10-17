@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nobreak", "src\Nobreak\Nobr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nobreak.Tests", "tests\Nobreak.Tests\Nobreak.Tests.csproj", "{AD7A111A-D54F-4D2F-A09D-E9E720F59BC6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nobreak.Infra", "src\Nobreak.Infra\Nobreak.Infra.csproj", "{03125141-69E6-4689-B4C2-B9B3F8C3256E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{AD7A111A-D54F-4D2F-A09D-E9E720F59BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD7A111A-D54F-4D2F-A09D-E9E720F59BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD7A111A-D54F-4D2F-A09D-E9E720F59BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03125141-69E6-4689-B4C2-B9B3F8C3256E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03125141-69E6-4689-B4C2-B9B3F8C3256E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03125141-69E6-4689-B4C2-B9B3F8C3256E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03125141-69E6-4689-B4C2-B9B3F8C3256E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BA90BA07-FB63-4B74-A1B5-A4B69CF2E064} = {3953BFF9-4537-40F1-8AC0-7CCE7B1D1586}
 		{AD7A111A-D54F-4D2F-A09D-E9E720F59BC6} = {54DA8635-C0D9-4641-8364-07D5892E2B24}
+		{03125141-69E6-4689-B4C2-B9B3F8C3256E} = {3953BFF9-4537-40F1-8AC0-7CCE7B1D1586}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8405D6BC-B484-4FB2-AAEC-E83666133707}

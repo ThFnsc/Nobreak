@@ -3,7 +3,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Nobreak.Services;
+using Nobreak.Models;
+using Nobreak.Infra.Context.Entities;
+using Nobreak.Infra.Services.Report;
 
 namespace Nobreak.Tests
 {
@@ -17,24 +19,10 @@ namespace Nobreak.Tests
             var uptime = new UptimeReport
             {
                 CalculatedOn = now,
-                RawData = new List<NobreakStateChange>
+                StateChanges = new List<NobreakStateChange>
                 {
-                    new NobreakStateChange
-                    {
-                        NobreakState=new NobreakState
-                        {
-                            PowerState=NobreakState.PowerStates.Grid,
-                            Timestamp=now-TimeSpan.FromHours(2)
-                        }
-                    },
-                    new NobreakStateChange
-                    {
-                        NobreakState = new NobreakState
-                        {
-                            PowerState=NobreakState.PowerStates.Battery,
-                            Timestamp=now-TimeSpan.FromHours(1)
-                        }
-                    }
+                    new NobreakStateChange(new NobreakState(PowerStates.Grid,now-TimeSpan.FromHours(2))),
+                    new NobreakStateChange(new NobreakState(PowerStates.Battery,now-TimeSpan.FromHours(1)))
                 }
             }
             .CalculateDurations()
