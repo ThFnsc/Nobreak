@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Nobreak.Entities
 {
@@ -18,5 +19,12 @@ namespace Nobreak.Entities
         public DbSet<Account> Accounts { get; set; }
 
         public NobreakContext(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>()
+                .Property(a => a.PasswordHash)
+                .HasConversion(p => p.ToString(), p => HashedValue.ParseFromHash(p));
+        }
     }
 }
