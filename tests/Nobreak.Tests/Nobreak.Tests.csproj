@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Nobreak.Infra\Nobreak.Infra.csproj" />
     <ProjectReference Include="..\..\src\Nobreak\Nobreak.csproj" />
   </ItemGroup>
 

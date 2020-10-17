@@ -1,4 +1,4 @@
-﻿using Nobreak.Services.ReCAPTCHA;
+﻿using Nobreak.Infra.Services.ReCaptcha;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nobreak.Models

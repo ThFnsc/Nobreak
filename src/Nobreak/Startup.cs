@@ -1,8 +1,4 @@
 using System;
-using Nobreak.Entities;
-using Nobreak.Services;
-using Nobreak.Services.ReCAPTCHA;
-using Nobreak.Services.Serial;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +11,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json.Serialization;
 using Nobreak.Extensions;
+using Nobreak.Infra.Services.ReCaptcha;
+using Nobreak.Infra.Services.Serial;
+using Nobreak.Infra.Services;
+using Nobreak.Infra;
+using Nobreak.Infra.Context;
+using AutoMapper;
 
 namespace Nobreak
 {
@@ -44,6 +46,8 @@ namespace Nobreak
 
             services.AddMemoryCache();
 
+            services.AddAutoMapper(typeof(MappingProfile));
+
             services.Configure<ForwardedHeadersOptions>(options =>
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost);
@@ -52,7 +56,7 @@ namespace Nobreak
             services.AddSingleton<NobreakSerialMonitor>();
             services.AddHostedService(provider => provider.GetService<NobreakSerialMonitor>());
 
-            services.AddDbContext<NobreakContext>(optionsBuilder =>
+            services.AddDbContext<IDbContext, DataContect>(optionsBuilder =>
                 optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default")));
 
             services.AddHttpClient<IReCaptchaValidator, ReCaptchaClient>(client =>
@@ -97,6 +101,10 @@ namespace Nobreak
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "justAction",
+                    pattern: "{action=Index}/{id?}",
+                    defaults: new { controller = "Home" });
             });
         }
     }

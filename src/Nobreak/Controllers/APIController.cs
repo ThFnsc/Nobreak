@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nobreak.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nobreak.Context.Entities;
+using Nobreak.Models;
+using Nobreak.Infra.Services;
+using Nobreak.Infra.Context.Entities;
+using Nobreak.Infra.Services.Report;
 
 namespace Nobreak.Controllers
 {

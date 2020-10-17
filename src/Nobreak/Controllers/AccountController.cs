@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Nobreak.Entities;
 using Nobreak.Models;
-using Nobreak.Services;
-using Nobreak.Services.ReCAPTCHA;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nobreak.Context.Entities;
+using Nobreak.Infra.Context;
+using Nobreak.Infra.Services.ReCaptcha;
+using Nobreak.Helpers;
 
 namespace Nobreak.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IReCaptchaValidator _reCaptchaValidator;
-        private readonly NobreakContext _context;
+        private readonly IDbContext _context;
 
-        public AccountController(IReCaptchaValidator reCaptchaValidator, NobreakContext context)
+        public AccountController(IReCaptchaValidator reCaptchaValidator, IDbContext context)
         {
             _reCaptchaValidator = reCaptchaValidator;
             _context = context;
@@ -56,12 +56,7 @@ namespace Nobreak.Controllers
                 }
                 else if (await _context.Accounts.CountAsync() == 0)
                 {
-                    _context.Accounts.Add(new Account
-                    {
-                        Email = model.Email,
-                        PasswordHash = model.Password,
-                        Name = model.Email,
-                    });
+                    _context.Add(new Account(model.Email, model.Email, model.Password));
                     await _context.SaveChangesAsync();
                     return await Login(model, returnUrl);
                 }
