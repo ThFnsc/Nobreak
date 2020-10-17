@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Nobreak.Context.Entities
@@ -15,7 +16,7 @@ namespace Nobreak.Context.Entities
         [Required]
         public string Email { get; set; }
 
-        public string PasswordHash { get; set; }
+        public HashedValue PasswordHash { get; set; }
 
         public IEnumerable<Claim> Claims() =>
             new List<Claim>

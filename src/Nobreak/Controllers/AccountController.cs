@@ -44,7 +44,7 @@ namespace Nobreak.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Accounts.SingleOrDefaultAsync(usr => usr.Email.ToLower() == model.Email.ToLower());
-                if (user != null && PasswordHasher.Check(model.Password, user.PasswordHash))
+                if (user != null && model.Password == user.PasswordHash)
                 {
                     var principal = new ClaimsPrincipal(new ClaimsIdentity(user.Claims(), CookieAuthenticationDefaults.AuthenticationScheme));
                     await HttpContext.SignInAsync(principal);
@@ -59,7 +59,7 @@ namespace Nobreak.Controllers
                     _context.Accounts.Add(new Account
                     {
                         Email = model.Email,
-                        PasswordHash = PasswordHasher.Hash(model.Password),
+                        PasswordHash = model.Password,
                         Name = model.Email,
                     });
                     await _context.SaveChangesAsync();
