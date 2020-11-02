@@ -57,6 +57,7 @@ namespace Nobreak.Infra.Services
                 using var changesStream = changesEntry.Open();
                 var jsonSettings = new JsonSerializerOptions();
                 jsonSettings.Converters.AddRange(new JsonStringEnumConverter(), new TimespanConverter());
+                jsonSettings.IgnoreReadOnlyProperties = true;
                 await JsonSerializer.SerializeAsync(changesStream, source(context), jsonSettings);
             }
 
