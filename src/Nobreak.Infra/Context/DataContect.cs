@@ -35,6 +35,10 @@ namespace Nobreak.Infra.Context
             modelBuilder.Entity<Account>()
                 .Property(a => a.Email)
                 .HasConversion(p => p.ToString(), p => p);
+
+            modelBuilder.Entity<NobreakState>()
+                .HasIndex(s => s.Timestamp)
+                .IsUnique();
         }
 
         public Task SaveChangesAsync() =>
