@@ -19,8 +19,8 @@ namespace Nobreak.Infra.Services
 {
     public class NobreakLogic : INobreakProvider
     {
-        private static readonly string RECENT_VALUES_ENTRY = nameof(RECENT_VALUES_ENTRY);
-        private static readonly string UPTIME_ENTRY = nameof(UPTIME_ENTRY);
+        private static readonly string _recentValuesEntry = nameof(_recentValuesEntry);
+        private static readonly string _uptimeEntry = nameof(_uptimeEntry);
 
         private readonly IServiceProvider _serviceProvider;
         private readonly IMemoryCache _memoryCache;
@@ -32,10 +32,10 @@ namespace Nobreak.Infra.Services
         }
 
         public async Task<UptimeReport> GetUptimeReportAsync() =>
-            await _memoryCache.GetWithServiceAsync<UptimeReport, IDbContext>(_serviceProvider, UPTIME_ENTRY, UptimeReport.Calculate, TimeSpan.FromSeconds(2));
+            await _memoryCache.GetWithServiceAsync<UptimeReport, IDbContext>(_serviceProvider, _uptimeEntry, UptimeReport.Calculate, TimeSpan.FromSeconds(2));
 
         public async Task<List<NobreakState>> GetRecentValuesAsync() =>
-            await _memoryCache.GetWithServiceAsync<List<NobreakState>, IDbContext>(_serviceProvider, RECENT_VALUES_ENTRY, async context =>
+            await _memoryCache.GetWithServiceAsync<List<NobreakState>, IDbContext>(_serviceProvider, _recentValuesEntry, async context =>
             {
                 var since = DateTime.Now - TimeSpan.FromDays(1);
                 return await context.NobreakStates
@@ -67,8 +67,8 @@ namespace Nobreak.Infra.Services
 
         public void ClearCache()
         {
-            _memoryCache.Remove(RECENT_VALUES_ENTRY);
-            _memoryCache.Remove(UPTIME_ENTRY);
+            _memoryCache.Remove(_recentValuesEntry);
+            _memoryCache.Remove(_uptimeEntry);
         }
 
         public async Task<NobreakStateChange> ToggleOnPurposeAsync(int id)

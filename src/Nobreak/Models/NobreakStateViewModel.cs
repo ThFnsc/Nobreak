@@ -41,6 +41,6 @@ namespace Nobreak.Models
         [JsonIgnore]
         [Display(Name = "Há")]
         public TimeSpan TimeAgo =>
-            DateTime.Now - Timestamp;
+            DateTime.UtcNow - Timestamp;
     }
 }

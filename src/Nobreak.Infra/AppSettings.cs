@@ -9,5 +9,7 @@
         public string RecaptchaSecret { get; set; }
 
         public int? BauldRate { get; set; }
+
+        public bool RunMigrationsOnStartup { get; set; }
     }
 }

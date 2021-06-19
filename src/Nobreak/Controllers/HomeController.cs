@@ -4,10 +4,8 @@ using Nobreak.Helpers;
 using Nobreak.Infra.Services;
 using Nobreak.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Nobreak.Controllers
@@ -22,33 +20,6 @@ namespace Nobreak.Controllers
             _nobreakProvider = nobreakProvider;
             _mapper = mapper;
         }
-
-        public IActionResult Index() =>
-            RedirectToAction(nameof(Events));
-
-        public IActionResult Recent() =>
-            View();
-
-        public IActionResult Events() =>
-            View();
-
-        public async Task<IActionResult> EventsTable()
-        {
-            var uptime = await _nobreakProvider.GetUptimeReportAsync();
-            var model = _mapper.Map<UptimeReportViewModel>(uptime);
-            return PartialView("_EventsTable", model);
-        }
-
-        public async Task<IActionResult> RecentValuesTable()
-        {
-            var recentValues = await _nobreakProvider.GetRecentValuesAsync();
-            var model = new RecentValuesViewModel
-            {
-                NobreakStates = _mapper.Map<List<NobreakStateViewModel>>(recentValues)
-            };
-            return PartialView("_RecentValuesTable", model);
-        }
-
         [HttpGet]
         public IActionResult DownloadAllValues() =>
             View();

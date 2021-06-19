@@ -1,21 +1,18 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Nobreak.Extensions;
+using Microsoft.Extensions.Options;
 using Nobreak.Infra;
 using Nobreak.Infra.Context;
 using Nobreak.Infra.Services;
 using Nobreak.Infra.Services.ReCaptcha;
 using Nobreak.Infra.Services.Serial;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Nobreak
 {
@@ -39,24 +36,23 @@ namespace Nobreak
 
             services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
 
-            services.AddControllersWithViews()
-                .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.Converters.AddRange(new JsonStringEnumConverter(), new TimespanConverter()));
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
 
             services.AddMemoryCache();
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost);
-
             services.AddSingleton<INobreakProvider, NobreakLogic>();
             services.AddSingleton<NobreakSerialMonitor>();
             services.AddHostedService(provider => provider.GetService<NobreakSerialMonitor>());
 
-            services.AddDbContext<IDbContext, DataContect>(optionsBuilder =>
-                optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default")));
+            services.AddDbContext<IDbContext, DataContext>(optionsBuilder =>
+            {
+                optionsBuilder.UseMySQL(Configuration.GetConnectionString("Default"));
+                if (_currentEnvironment.IsDevelopment())
+                    optionsBuilder.EnableSensitiveDataLogging();
+            });
 
             services.AddHttpClient<IReCaptchaValidator, ReCaptchaClient>(client =>
                 client.BaseAddress = new Uri("https://www.google.com/recaptcha/api/"));
@@ -70,20 +66,23 @@ namespace Nobreak
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IDbContext context,
+            IOptions<AppSettings> settings)
         {
-            app.UseForwardedHeaders();
+            if (settings.Value.RunMigrationsOnStartup)
+                context.Migrate();
 
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -93,17 +92,10 @@ namespace Nobreak
 
             app.UseAuthorization();
 
-            app.UseRequestLogging(logger);
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute(
-                    name: "justAction",
-                    pattern: "{action=Index}/{id?}",
-                    defaults: new { controller = "Home" });
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
             });
         }
     }

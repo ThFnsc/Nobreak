@@ -8,7 +8,7 @@ using Nobreak.Infra.Context;
 
 namespace Nobreak.Migrations
 {
-    [DbContext(typeof(DataContect))]
+    [DbContext(typeof(DataContext))]
     [Migration("20210415034359_AddedNobreakStateTimestampIndex")]
     partial class AddedNobreakStateTimestampIndex
     {

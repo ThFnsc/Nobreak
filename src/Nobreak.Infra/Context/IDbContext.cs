@@ -20,5 +20,7 @@ namespace Nobreak.Infra.Context
         T Add<T>(T entity) where T : Entity;
 
         IEnumerable<T> AddRange<T>(IEnumerable<T> entities) where T : Entity;
+
+        void Migrate();
     }
 }

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Nobreak.Infra\Nobreak.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

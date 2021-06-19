@@ -6,7 +6,7 @@ namespace System
 {
     public static class TimeSpanExtensions
     {
-        private static KeyValuePair<string, double>[] TIME_UNITS;
+        private static KeyValuePair<string, double>[] _timeUnits;
 
         private static string ShowIfGreaterThanZero(this int input, string suffix) =>
             input > 0
@@ -15,9 +15,9 @@ namespace System
 
         public static string Format(this TimeSpan span)
         {
-            if (TIME_UNITS == null)
+            if (_timeUnits == null)
             {
-                TIME_UNITS = new Dictionary<string, double>
+                _timeUnits = new Dictionary<string, double>
                 {
                     { "s", 1 },
                     { "m", 60 },
@@ -29,8 +29,8 @@ namespace System
                     { "dec", 10 },
                     { "c", 10 }
                 }.ToArray();
-                for (var i = 1; i < TIME_UNITS.Length; i++)
-                    TIME_UNITS[i] = new KeyValuePair<string, double>(TIME_UNITS[i].Key, TIME_UNITS[i].Value * TIME_UNITS[i - 1].Value);
+                for (var i = 1; i < _timeUnits.Length; i++)
+                    _timeUnits[i] = new KeyValuePair<string, double>(_timeUnits[i].Key, _timeUnits[i].Value * _timeUnits[i - 1].Value);
             }
 
             var seconds = span.TotalSeconds;
@@ -39,17 +39,17 @@ namespace System
                 return $"-({span.Multiply(-1).Format()})";
 
             var values = new List<string>();
-            for (var i = TIME_UNITS.Length - 1; i >= 0; i--)
+            for (var i = _timeUnits.Length - 1; i >= 0; i--)
             {
-                var result = Math.Floor(seconds / TIME_UNITS[i].Value);
+                var result = Math.Floor(seconds / _timeUnits[i].Value);
                 if (result >= 1)
                 {
-                    seconds %= TIME_UNITS[i].Value;
-                    values.Add($"{result}{TIME_UNITS[i].Key}");
+                    seconds %= _timeUnits[i].Value;
+                    values.Add($"{result}{_timeUnits[i].Key}");
                 }
             }
             if (values.Count == 0)
-                values.Add($"0{TIME_UNITS.First().Key}");
+                values.Add($"0{_timeUnits.First().Key}");
             return string.Join(" ", values);
         }
 

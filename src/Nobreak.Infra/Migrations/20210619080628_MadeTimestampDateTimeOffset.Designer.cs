@@ -9,15 +9,15 @@ using Nobreak.Infra.Context;
 namespace Nobreak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200823050043_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210619080628_MadeTimestampDateTimeOffset")]
+    partial class MadeTimestampDateTimeOffset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.7");
 
             modelBuilder.Entity("Nobreak.Context.Entities.Account", b =>
                 {
@@ -34,9 +34,15 @@ namespace Nobreak.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Timestamp");
 
                     b.ToTable("Accounts");
                 });
@@ -57,7 +63,7 @@ namespace Nobreak.Migrations
                         .HasColumnType("float");
 
                     b.Property<byte>("LoadPercentage")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<float>("TemperatureC")
                         .HasColumnType("float");
@@ -73,35 +79,42 @@ namespace Nobreak.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Timestamp");
+
                     b.ToTable("NobreakStates");
                 });
 
-            modelBuilder.Entity("Nobreak.Context.Entities.NobreakStateChange", b =>
+            modelBuilder.Entity("Nobreak.Infra.Context.Entities.NobreakStateChange", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("NobreakStateId")
+                    b.Property<long?>("NobreakStateId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("OnPurpose")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NobreakStateId");
 
+                    b.HasIndex("Timestamp");
+
                     b.ToTable("NobreakStateChanges");
                 });
 
-            modelBuilder.Entity("Nobreak.Context.Entities.NobreakStateChange", b =>
+            modelBuilder.Entity("Nobreak.Infra.Context.Entities.NobreakStateChange", b =>
                 {
                     b.HasOne("Nobreak.Context.Entities.NobreakState", "NobreakState")
                         .WithMany()
-                        .HasForeignKey("NobreakStateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NobreakStateId");
+
+                    b.Navigation("NobreakState");
                 });
 #pragma warning restore 612, 618
         }

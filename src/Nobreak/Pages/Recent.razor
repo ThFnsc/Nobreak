@@ -1,0 +1,54 @@
+﻿@page "/Recent"
+
+@implements IDisposable
+
+@inject INobreakProvider _nobreak
+@inject IMapper _mapper
+
+<Table Source="_states">
+    <Head>
+        <th><Name T="NobreakStateViewModel" For="s=>s.Timestamp"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.PowerState"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageIn"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.LoadPercentage"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.FrequencyHz"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage"></Name></th>
+    </Head>
+    <Body Context="state">
+        <td>@(state.Timestamp.Format()) (há @state.TimeAgo.Format())</td>
+        <td>@(state.PowerState.GetDisplayName())</td>
+        <td>@(state.VoltageIn)v</td>
+        <td>@(state.VoltageOut)v</td>
+        <td>@(state.LoadPercentage)%</td>
+        <td>@(state.FrequencyHz)hz</td>
+        <td>@(state.BatteryVoltage)v (@(state.BatteryPercentage)%)</td>
+        <td>@(state.TemperatureC)ºC</td>
+    </Body>
+</Table>
+
+@code {
+    private List<NobreakStateViewModel> _states;
+    private System.Timers.Timer _timer;
+
+    private async Task Reload()
+    {
+        var recentValues = await _nobreak.GetRecentValuesAsync();
+        _states = _mapper.Map<List<NobreakStateViewModel>>(recentValues);
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _timer = new (1000);
+        _timer.Elapsed += async (_, _) => {
+            await Reload();
+            await InvokeAsync(StateHasChanged);
+        };
+        _timer.Enabled = true;
+        return Reload();
+    }
+
+    public void Dispose() =>
+        _timer?.Dispose();
+}

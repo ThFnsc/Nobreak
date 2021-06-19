@@ -6,7 +6,7 @@ namespace Nobreak.Context.Entities
 {
     public class NobreakState : Entity
     {
-        private static readonly Regex Q1Res = new Regex(@"\((\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*) (\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*)");
+        private static readonly Regex _q1Res = new Regex(@"\((\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*) (\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*)");
 
         public float VoltageIn { get; set; }
 
@@ -58,7 +58,7 @@ namespace Nobreak.Context.Entities
 
         public static NobreakState FromSerialResponse(string response)
         {
-            var match = Q1Res.Match(response);
+            var match = _q1Res.Match(response);
             if (!match.Success)
                 throw new Exception("Porta serial não retornou com o formato esperado");
             return new NobreakState

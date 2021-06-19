@@ -1,0 +1,59 @@
+﻿@typeparam T
+
+@if (Source is null)
+{
+    if (Loading is null)
+    {
+        <div class="alert alert-info">Carregando...</div>
+    }
+    else
+    {
+        @Loading
+    }
+}
+else if (!Source.Any())
+{
+    if (Empty is null)
+    {
+        <div class="alert alert-info">Nenhum dado para mostrar</div>
+    }
+    else
+    {
+        @Empty
+    }
+}
+else
+{
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                @Head
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Source)
+            {
+                <tr>
+                    @Body(item)
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment Head { get; set; }
+
+    [Parameter]
+    public RenderFragment<T> Body { get; set; }
+
+    [Parameter]
+    public RenderFragment Empty { get; set; }
+
+    [Parameter]
+    public RenderFragment Loading { get; set; }
+
+    [Parameter]
+    public IEnumerable<T> Source { get; set; }
+}
