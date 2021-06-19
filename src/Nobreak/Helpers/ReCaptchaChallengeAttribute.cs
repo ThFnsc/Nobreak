@@ -16,14 +16,17 @@ namespace Nobreak.Helpers
         {
             var validator = context.HttpContext.RequestServices.GetRequiredService<IReCaptchaValidator>();
 
-            if (!context.ActionArguments.TryGetValue("model", out var model))
-                throw new Exception("Missing model");
-            if (!(model is IReCaptchaRequired reCaptchaModel))
-                throw new Exception("Model does not implement " + nameof(IReCaptchaRequired));
-            if (string.IsNullOrWhiteSpace(reCaptchaModel.ReCaptchaToken))
-                context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), MissingTokenErrorMessage ?? InvalidTokenErrorMessage);
-            else if (!await validator.Passed(reCaptchaModel.ReCaptchaToken))
-                context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), InvalidTokenErrorMessage);
+            if (validator.Ready)
+            {
+                if (!context.ActionArguments.TryGetValue("model", out var model))
+                    throw new Exception("Missing model");
+                if (!(model is IReCaptchaRequired reCaptchaModel))
+                    throw new Exception("Model does not implement " + nameof(IReCaptchaRequired));
+                if (string.IsNullOrWhiteSpace(reCaptchaModel.ReCaptchaToken))
+                    context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), MissingTokenErrorMessage ?? InvalidTokenErrorMessage);
+                else if (!await validator.Passed(reCaptchaModel.ReCaptchaToken))
+                    context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), InvalidTokenErrorMessage);
+            }
 
             await next();
         }

@@ -7,6 +7,7 @@ using Nobreak.Helpers;
 using Nobreak.Infra.Context;
 using Nobreak.Infra.Services.ReCaptcha;
 using Nobreak.Models;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -44,14 +45,17 @@ namespace Nobreak.Controllers
                 if (user != null && model.Password == user.PasswordHash)
                 {
                     var principal = new ClaimsPrincipal(new ClaimsIdentity(user.Claims(), CookieAuthenticationDefaults.AuthenticationScheme));
-                    await HttpContext.SignInAsync(principal);
+                    await HttpContext.SignInAsync(principal, new AuthenticationProperties { 
+                        AllowRefresh=true,
+                        IsPersistent=true,
+                        ExpiresUtc=DateTimeOffset.Now.AddMonths(1)
+                    });
                     HttpContext.User = principal;
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                        return Redirect(returnUrl);
-                    else
-                        return RedirectToAction("Index", "Home");
+                    return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+                        ? Redirect(returnUrl) 
+                        : Redirect("/");
                 }
-                else if (await _context.Accounts.CountAsync() == 0)
+                else if (!await _context.Accounts.AnyAsync())
                 {
                     _context.Add(new Account(model.Email, model.Email, model.Password));
                     await _context.SaveChangesAsync();

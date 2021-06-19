@@ -2,60 +2,77 @@
 
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
+@inject NavigationManager _navManager
 
 <h2>Uptime</h2>
 <Table Source="_uptime?.UptimePerIntervals">
     <Head>
-        <th><Name T="UptimeInIntervalViewModel" For="s=>s.TimeSpan"></Name></th>
-        @foreach (var possibleState in _uptime?.PossibleStates.AsEnumerable() ?? Array.Empty<Context.Entities.PowerStates>())
-        {
-            <th>@possibleState.GetDisplayName()</th>
-        }
+    <th><Name T="UptimeInIntervalViewModel" For="s=>s.TimeSpan"></Name></th>
+    @foreach (var possibleState in _uptime?.PossibleStates.AsEnumerable() ?? Array.Empty<Context.Entities.PowerStates>())
+    {
+        <th>@possibleState.GetDisplayName()</th>
+    }
     </Head>
     <Body Context="state">
-        <td>@state.TimeSpan.Format()</td>
-        @foreach (var state in state.UptimeStates)
-        {
-            <td>@state.ShareTimespan.Format() (@state.SharePercentage.ToString("0.0000")%)</td>
-        }
+    <td>@state.TimeSpan.Format()</td>
+    @foreach (var state in state.UptimeStates)
+    {
+        <td>@state.ShareTimespan.Format() (@state.SharePercentage.ToString("0.0000")%)</td>
+    }
     </Body>
 </Table>
 
 <h2>Eventos</h2>
 <Table Source="_uptime?.StateChanges">
     <Head>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose"></Name></th>
+    <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>
+    <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp"></Name></th>
+    <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration"></Name></th>
+    <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose"></Name></th>
     </Head>
     <Body Context="powerEvent">
-        <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
-        <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
-        <td>@powerEvent.Duration.Format()</td>
-        <td>
-            @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
-            {
-                <a>
-                    <span class="badge badge-@(powerEvent.OnPurpose ? "success" : "danger")">@powerEvent.OnPurpose.SimNao()</span>
-                </a>
-            }
-            else
-            {
-                <text>-</text>
-            }
-        </td>
+    <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
+    <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
+    <td>@powerEvent.Duration.Format()</td>
+    <td>
+        @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
+        {
+            <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "success" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
+                @powerEvent.OnPurpose.SimNao()
+            </button>
+        }
+        else
+        {
+            <text>-</text>
+        }
+    </td>
     </Body>
 </Table>
 <Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     private UptimeReportViewModel _uptime;
 
     private async Task Reload()
     {
         var uptime = await _nobreak.GetUptimeReportAsync();
         _uptime = _mapper.Map<UptimeReportViewModel>(uptime);
+    }
+
+    private async Task ToggleStateOnPurpose(int id)
+    {
+        var auth = await authenticationStateTask;
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            await _nobreak.ToggleOnPurposeAsync(id);
+            await Reload();
+            StateHasChanged();
+        }
+        else
+            _navManager.NavigateTo("/Account/Login", true);
     }
 
     protected override Task OnInitializedAsync() =>
