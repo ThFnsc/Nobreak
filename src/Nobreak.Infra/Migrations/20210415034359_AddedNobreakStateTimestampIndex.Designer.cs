@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nobreak.Infra.Context;
 
 namespace Nobreak.Migrations
 {
     [DbContext(typeof(DataContect))]
-    partial class NobreakContextModelSnapshot : ModelSnapshot
+    [Migration("20210415034359_AddedNobreakStateTimestampIndex")]
+    partial class AddedNobreakStateTimestampIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
