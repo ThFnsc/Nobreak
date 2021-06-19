@@ -11,10 +11,10 @@
         <th><Name T="NobreakStateViewModel" For="s=>s.PowerState"></Name></th>
         <th><Name T="NobreakStateViewModel" For="s=>s.VoltageIn"></Name></th>
         <th><Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
         <th><Name T="NobreakStateViewModel" For="s=>s.LoadPercentage"></Name></th>
         <th><Name T="NobreakStateViewModel" For="s=>s.FrequencyHz"></Name></th>
         <th><Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage"></Name></th>
+        <th><Name T="NobreakStateViewModel" For="s=>s.TemperatureC"></Name></th>
     </Head>
     <Body Context="state">
         <td>@(state.Timestamp.Format()) (há @state.TimeAgo.Format())</td>
