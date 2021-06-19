@@ -1,9 +1,5 @@
 ﻿using Nobreak.Context.Entities;
-using Nobreak.Infra.Services.Report;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nobreak.Models
 {

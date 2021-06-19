@@ -1,22 +1,21 @@
-using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using System.Text.Json.Serialization;
 using Nobreak.Extensions;
-using Nobreak.Infra.Services.ReCaptcha;
-using Nobreak.Infra.Services.Serial;
-using Nobreak.Infra.Services;
 using Nobreak.Infra;
 using Nobreak.Infra.Context;
-using AutoMapper;
+using Nobreak.Infra.Services;
+using Nobreak.Infra.Services.ReCaptcha;
+using Nobreak.Infra.Services.Serial;
+using System;
+using System.Text.Json.Serialization;
 
 namespace Nobreak
 {

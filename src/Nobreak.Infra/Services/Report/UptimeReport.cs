@@ -1,12 +1,11 @@
-﻿using Nobreak.Context.Entities;
-using Nobreak.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Nobreak.Context.Entities;
+using Nobreak.Infra.Context;
+using Nobreak.Infra.Context.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nobreak.Infra.Context.Entities;
-using Nobreak.Infra.Context;
 
 namespace Nobreak.Infra.Services.Report
 {
@@ -42,7 +41,7 @@ namespace Nobreak.Infra.Services.Report
         public UptimeReport CalculateDurations()
         {
             StateChanges = StateChanges.OrderByDescending(r => r.NobreakState.Timestamp).ToList();
-            for (int i = 0; i < StateChanges.Count; i++)
+            for (var i = 0; i < StateChanges.Count; i++)
                 StateChanges[i].Duration = (i > 0 ? StateChanges[i - 1].NobreakState.Timestamp : CalculatedOn) - StateChanges[i].NobreakState.Timestamp;
             return this;
         }
@@ -57,7 +56,7 @@ namespace Nobreak.Infra.Services.Report
                 if (rightBefore != null)
                     events.Add(rightBefore);
                 var sumPerState = PossibleStates.Select(s => new KeyValuePair<PowerStates, TimeSpan>(s, TimeSpan.Zero)).ToDictionary();
-                for (int i = 0; i < events.Count; i++)
+                for (var i = 0; i < events.Count; i++)
                     sumPerState[events[i].PowerState] += events[i].NobreakState.Timestamp < since
                         ? events[i].Duration - (CalculatedOn - relevantTimespan - events[i].NobreakState.Timestamp)
                         : events[i].Duration;

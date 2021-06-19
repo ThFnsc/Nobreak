@@ -13,7 +13,7 @@ namespace Nobreak.Models
         [Required(ErrorMessage = "O campo é obrigatório")]
         [Display(Name = "Senha")]
         public string Password { get; set; }
-        
-        public string  ReCaptchaToken { get; set; }
+
+        public string ReCaptchaToken { get; set; }
     }
 }

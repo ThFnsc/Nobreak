@@ -35,9 +35,9 @@ namespace Nobreak.Context.Entities
             set
             {
                 if (value == PowerStates.Grid)
-                    Extras = (byte)(Extras & 0b01111111);
+                    Extras = (byte) (Extras & 0b01111111);
                 else
-                    Extras = (byte)(Extras | 0b10000000);
+                    Extras = (byte) (Extras | 0b10000000);
             }
         }
 
@@ -64,12 +64,12 @@ namespace Nobreak.Context.Entities
             return new NobreakState
             {
                 VoltageIn = float.Parse(match.Groups[1].Value),
-                VoltageOut = float.Parse(match.Groups[3].Value)*2,
+                VoltageOut = float.Parse(match.Groups[3].Value) * 2,
                 LoadPercentage = byte.Parse(match.Groups[4].Value),
                 FrequencyHz = float.Parse(match.Groups[5].Value),
                 BatteryVoltage = float.Parse(match.Groups[6].Value),
                 TemperatureC = float.Parse(match.Groups[7].Value),
-                Extras = Convert.ToByte(match.Groups[8].Value,2)
+                Extras = Convert.ToByte(match.Groups[8].Value, 2)
             };
         }
 

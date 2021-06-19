@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Nobreak.Models;
-using System.Web;
-using System.Net.Http.Headers;
-using System.Diagnostics;
 using Nobreak.Helpers;
 using Nobreak.Infra.Services;
-using AutoMapper;
+using Nobreak.Models;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace Nobreak.Controllers
 {

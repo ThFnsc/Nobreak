@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace Nobreak.Infra.Services
 {
@@ -18,7 +15,7 @@ namespace Nobreak.Infra.Services
         }
 
         public static string RandomBase64(int length) =>
-            Convert.ToBase64String(RandomBytes((int)Math.Ceiling(length * 6.0 / 8.0))).Substring(0, length);
+            Convert.ToBase64String(RandomBytes((int) Math.Ceiling(length * 6.0 / 8.0))).Substring(0, length);
 
         public static string RandomBase64Url(int length) =>
             RandomBase64(length).Replace('+', '-').Replace('/', '_');

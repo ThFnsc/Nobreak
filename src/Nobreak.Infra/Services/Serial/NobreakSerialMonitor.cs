@@ -1,16 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO.Ports;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Nobreak.Context.Entities;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
-using Nobreak.Infra.Context.Entities;
+using Nobreak.Context.Entities;
 using Nobreak.Infra.Context;
+using Nobreak.Infra.Context.Entities;
+using System;
+using System.IO.Ports;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nobreak.Infra.Services.Serial
 {

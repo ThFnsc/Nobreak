@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.Caching.Memory
@@ -10,8 +7,8 @@ namespace Microsoft.Extensions.Caching.Memory
     public static class MemoryCacheExtensions
     {
         public static Task<T> GetAsync<T>(this IMemoryCache memoryCache, object identifier, Func<Task<T>> getValue, TimeSpan ttl) =>
-            memoryCache.TryGetValue(identifier, out object cached)
-                ? (Task<T>)cached
+            memoryCache.TryGetValue(identifier, out var cached)
+                ? (Task<T>) cached
                 : memoryCache.Set(identifier, Task.Run(getValue), ttl);
 
         public static Task<TOutput> GetWithServiceAsync<TOutput, TService>(this IMemoryCache memoryCache, IServiceProvider serviceProvider, object identifier, Func<TService, Task<TOutput>> getValue, TimeSpan ttl) =>

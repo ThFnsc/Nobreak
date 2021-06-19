@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
+﻿using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -40,7 +37,7 @@ namespace System
         public static string Repeat(this string input, int times, string separator = "")
         {
             var output = new StringBuilder();
-            for (int i = 0; i < times; i++)
+            for (var i = 0; i < times; i++)
             {
                 output.Append(input);
                 if (i != times - 1)
@@ -52,7 +49,7 @@ namespace System
         public static string BrainDamage(this string input)
         {
             var random = new Random();
-            return new string(input.ToCharArray().Select(c=>random.NextDouble()>.5?char.ToLowerInvariant(c):char.ToUpperInvariant(c)).ToArray());
+            return new string(input.ToCharArray().Select(c => random.NextDouble() > .5 ? char.ToLowerInvariant(c) : char.ToUpperInvariant(c)).ToArray());
         }
 
         public static string ToSlackQuote(this string input) =>
@@ -76,7 +73,7 @@ namespace System
             : input.Split(' ').Count(ss => ss.Length > 0);
 
         public static string[] SplitOnLineBreaks(this string input) =>
-            input.Split(new string[] { "\r\n", "\r", "\n" },StringSplitOptions.None);
+            input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
         public static string LastXChars(this string input, int qtd) =>
             input == null ? null : (input.Length < qtd ? input : input.Substring(input.Length - qtd, qtd));

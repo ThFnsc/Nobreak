@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace System
+﻿namespace System
 {
     public static class NumberExtensions
     {
@@ -10,7 +6,7 @@ namespace System
             new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(input);
 
         public static int Mod(this int a, int b) =>
-            a - (int)Math.Floor((double)a / b) * b;
+            a - (int) Math.Floor((double) a / b) * b;
 
         public static float Map(this float x, float in_min, float in_max, float out_min, float out_max, bool cutoff = false)
         {

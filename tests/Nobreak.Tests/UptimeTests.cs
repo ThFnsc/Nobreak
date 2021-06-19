@@ -1,11 +1,9 @@
-﻿using Nobreak.Context.Entities;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Nobreak.Models;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Nobreak.Context.Entities;
 using Nobreak.Infra.Context.Entities;
 using Nobreak.Infra.Services.Report;
+using System;
+using System.Collections.Generic;
 
 namespace Nobreak.Tests
 {

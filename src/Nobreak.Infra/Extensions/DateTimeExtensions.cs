@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Globalization;
-using System.Text;
+﻿using System.Globalization;
 
 namespace System
 {
@@ -36,7 +31,7 @@ namespace System
         public static DateTime Last(this DateTime input, Predicate<DateTime> predicate) =>
             input.Next(predicate, true);
 
-        public static DateTime Next(this DateTime input, Predicate<DateTime> predicate, bool backwards=false)
+        public static DateTime Next(this DateTime input, Predicate<DateTime> predicate, bool backwards = false)
         {
             do input = input.AddDays(backwards ? -1 : 1);
             while (!predicate(input));

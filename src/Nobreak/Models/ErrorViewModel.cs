@@ -1,5 +1,3 @@
-using System;
-
 namespace Nobreak.Models
 {
     public class ErrorViewModel

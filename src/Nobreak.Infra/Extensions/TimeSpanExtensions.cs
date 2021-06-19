@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace System
@@ -17,7 +15,7 @@ namespace System
 
         public static string Format(this TimeSpan span)
         {
-            if(TIME_UNITS == null)
+            if (TIME_UNITS == null)
             {
                 TIME_UNITS = new Dictionary<string, double>
                 {
@@ -78,14 +76,15 @@ namespace System
                 foreach (Match part in parts)
                     time = time.Add((part.Groups[2].Value switch
                     {
-                        "d" => (Func<int, TimeSpan>)(i => TimeSpan.FromDays(i)),
+                        "d" => (Func<int, TimeSpan>) (i => TimeSpan.FromDays(i)),
                         "h" => i => TimeSpan.FromHours(i),
                         "m" => i => TimeSpan.FromMinutes(i),
                         "s" => i => TimeSpan.FromSeconds(i),
                         _ => throw new Exception()
                     }).Invoke(int.Parse(part.Groups[1].Value)));
                 return time;
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 return null;
             }

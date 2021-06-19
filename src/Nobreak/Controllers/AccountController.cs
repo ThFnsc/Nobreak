@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Nobreak.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nobreak.Context.Entities;
+using Nobreak.Helpers;
 using Nobreak.Infra.Context;
 using Nobreak.Infra.Services.ReCaptcha;
-using Nobreak.Helpers;
+using Nobreak.Models;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Nobreak.Controllers
 {
@@ -32,9 +29,9 @@ namespace Nobreak.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null) =>
             User.Identity.IsAuthenticated
-                ? string.IsNullOrWhiteSpace(returnUrl) 
+                ? string.IsNullOrWhiteSpace(returnUrl)
                     ? RedirectToAction("Index", "Home")
-                    : (IActionResult) Redirect(returnUrl)
+                    : Redirect(returnUrl)
                 : View();
 
         [HttpPost]

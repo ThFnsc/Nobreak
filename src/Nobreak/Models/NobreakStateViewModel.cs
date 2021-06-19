@@ -33,7 +33,7 @@ namespace Nobreak.Models
 
         [Display(Name = "Estado")]
         public PowerStates PowerState { get; set; }
-        
+
 
         [Display(Name = "Extras")]
         public byte Extras { get; set; }

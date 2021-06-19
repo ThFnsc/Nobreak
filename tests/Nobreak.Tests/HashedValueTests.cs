@@ -1,8 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Security.Cryptography;
-using System;
 
 namespace Nobreak.Tests
 {
@@ -29,7 +28,7 @@ namespace Nobreak.Tests
 
             foreach (var password1 in randomStrings)
                 foreach (var password2 in randomStrings)
-                    Assert.IsTrue((HashedValue)password1 == password2 == (password1 == password2));
+                    Assert.IsTrue((HashedValue) password1 == password2 == (password1 == password2));
         }
 
         [TestMethod]

@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nobreak.Infra.Services.ReCaptcha;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Nobreak.Helpers
@@ -14,11 +12,11 @@ namespace Nobreak.Helpers
 
         public string MissingTokenErrorMessage { get; set; }
 
-        public async override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var validator = context.HttpContext.RequestServices.GetRequiredService<IReCaptchaValidator>();
 
-            if (!context.ActionArguments.TryGetValue("model", out object model))
+            if (!context.ActionArguments.TryGetValue("model", out var model))
                 throw new Exception("Missing model");
             if (!(model is IReCaptchaRequired reCaptchaModel))
                 throw new Exception("Model does not implement " + nameof(IReCaptchaRequired));

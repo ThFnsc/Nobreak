@@ -1,5 +1,4 @@
 ﻿using Nobreak.Infra.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,13 +32,13 @@ namespace System.Net.Http
                 new HttpRequestException($"Erro no {req.Method} para '{req.RequestUri}': {res.StatusCode}")
                     .AddData("Request", httpRequest)
                     .AddData("ResponseBody", resBody);
-            
-            TParse Parse<TParse>() where TParse:class =>
+
+            TParse Parse<TParse>() where TParse : class =>
                 res.Content.Headers.ContentType.MediaType.ToLower() switch
                 {
                     "application/json" => resBody.AsJson<TParse>(),
                     "application/x-www-form-urlencoded" => QueryStringConvert.DeserializeObject<TParse>(resBody),
-                    _ => typeof(TParse) == typeof(string) ? resBody as TParse: throw new NotImplementedException($"O mediatype {res.Content.Headers.ContentType} não é suportado")
+                    _ => typeof(TParse) == typeof(string) ? resBody as TParse : throw new NotImplementedException($"O mediatype {res.Content.Headers.ContentType} não é suportado")
                         .AddData("Request", httpRequest)
                         .AddData("ResponseBody", resBody),
                 };
