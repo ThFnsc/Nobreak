@@ -19,15 +19,32 @@
 <body>
     <component type="typeof(App)" render-mode="Server" />
 
+    @*https://docs.microsoft.com/en-us/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-3.1&pivots=server#reflect-the-connection-state-in-the-ui*@
+    <div id="components-reconnect-modal" class="my-reconnect-modal components-reconnect-hide">
+        <div class="show p-5">
+            <h1>Conexão com o servidor perdida. Tentando reconectar</h1>
+            <div class="spinner-grow" role="status"></div>
+        </div>
+        <div class="failed p-5">
+            <h1>Não foi possível reestabelecer uma conexão com o servidor</h1>
+            <button onclick="location.reload()" class="btn btn-primary btn-lg mt-2">Recarregar</button>
+        </div>
+        <div class="rejected p-5">
+            <h1>Conexão reestabelecida! Mas você precisa recarregar a página...</h1>
+            <button onclick="location.reload()" class="btn btn-primary btn-lg mt-2">Recarregar</button>
+        </div>
+    </div>
+
     <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+        <div class="alert alert-danger pb-3">
+            <environment include="Staging,Production">
+                Um erro ocorreu. Pode ser que a aplicação não responda novamente até recarregar a página
+            </environment>
+            <environment include="Development">
+                Um erro ocorreu. Acesse as ferramentas de desenvolvedor para mais detalhes
+            </environment>
+            <a href="" class="reload btn btn-danger btn-sm float-right">Recarregar</a>
+        </div>
     </div>
 
     <script src="_framework/blazor.server.js"></script>

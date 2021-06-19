@@ -1,4 +1,5 @@
 ﻿@implements IDisposable
+@inject ILogger<Timer> _logger
 
 @code {
     private System.Timers.Timer _timer = new();
@@ -16,7 +17,8 @@
     {
         _timer.Elapsed += async (_, _) =>
         {
-            await Elapsed();
+            try { await Elapsed(); }
+            catch(Exception e) { _logger.LogError(e, "An error occurred on a Timer"); }
             await InvokeAsync(StateHasChanged);
         };
     }
