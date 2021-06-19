@@ -20,9 +20,6 @@ namespace Nobreak.Controllers
             _nobreakProvider = nobreakProvider;
             _mapper = mapper;
         }
-        [HttpGet]
-        public IActionResult DownloadAllValues() =>
-            View();
 
         [HttpPost]
         [ReCaptchaChallenge(InvalidTokenErrorMessage = "Não foi possível confirmar que você não é um robô. Tente novamente, por favor 🤖")]
@@ -34,9 +31,5 @@ namespace Nobreak.Controllers
                         await _nobreakProvider.GetAllValuesAsync(stream));
             return View(model);
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() =>
-            View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
