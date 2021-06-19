@@ -1,7 +1,5 @@
 ﻿@page "/Events"
 
-@implements IDisposable
-
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
 
@@ -49,10 +47,10 @@
         </td>
     </Body>
 </Table>
+<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
 
 @code {
     private UptimeReportViewModel _uptime;
-    private System.Timers.Timer _timer;
 
     private async Task Reload()
     {
@@ -60,17 +58,6 @@
         _uptime = _mapper.Map<UptimeReportViewModel>(uptime);
     }
 
-    protected override Task OnInitializedAsync()
-    {
-        _timer = new (1000);
-        _timer.Elapsed += async (_, _) => {
-            await Reload();
-            await InvokeAsync(StateHasChanged);
-        };
-        _timer.Enabled = true;
-        return Reload();
-    }
-
-    public void Dispose() =>
-        _timer?.Dispose();
+    protected override Task OnInitializedAsync() =>
+        Reload();
 }

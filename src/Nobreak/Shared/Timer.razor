@@ -1,0 +1,26 @@
+﻿@implements IDisposable
+
+@code {
+    private System.Timers.Timer _timer = new();
+
+    [Parameter]
+    public bool Enabled { get => _timer.Enabled; set => _timer.Enabled = value; }
+
+    [Parameter]
+    public TimeSpan Interval { get => TimeSpan.FromMilliseconds(_timer.Interval); set => _timer.Interval = value.TotalMilliseconds; }
+
+    [Parameter]
+    public Func<Task> Elapsed { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _timer.Elapsed += async (_, _) =>
+        {
+            await Elapsed();
+            await InvokeAsync(StateHasChanged);
+        };
+    }
+
+    public void Dispose() =>
+        _timer?.Dispose();
+}
