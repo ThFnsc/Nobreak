@@ -50,10 +50,7 @@ namespace Nobreak.Infra.Context
             return entities;
         }
 
-        public void Migrate()
-        {
-            Database.EnsureCreated();
+        public void Migrate() =>
             Database.Migrate();
-        }
     }
 }
