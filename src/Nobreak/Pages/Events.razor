@@ -63,6 +63,7 @@
     {
         var uptime = await _nobreak.GetUptimeReportAsync();
         _uptime = _mapper.Map<UptimeReportViewModel>(uptime);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ToggleStateOnPurpose(int id)
@@ -72,7 +73,6 @@
         {
             await _nobreak.ToggleOnPurposeAsync(id);
             await Reload();
-            StateHasChanged();
         }
         else
             Modal.Show<Login>("Login", new ModalOptions

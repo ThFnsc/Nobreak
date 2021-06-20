@@ -4,6 +4,7 @@
 @inject IMapper _mapper
 @inject IDistributedCache _cache
 @inject NavigationManager _navManager
+@inject IOptions<AppSettings> _appSettings
 
 <div class="w-100 mb-2 text-center">
     <ReCAPTCHA OnAuthorized="DownloadValues">
@@ -57,10 +58,17 @@
 @code {
     private List<NobreakStateViewModel> _states;
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
     private async Task Reload()
     {
         var recentValues = await _nobreak.GetRecentValuesAsync();
         _states = _mapper.Map<List<NobreakStateViewModel>>(recentValues);
+        await InvokeAsync(StateHasChanged);
     }
 
     protected override Task OnInitializedAsync() =>
@@ -68,6 +76,14 @@
 
     private async Task DownloadValues()
     {
+        if (_appSettings.Value.RequireLoginToDownloadValues && !(await authenticationStateTask).User.Identity.IsAuthenticated)
+        {
+            Modal.Show<Login>("Login", new ModalOptions
+            {
+                Animation = ModalAnimation.FadeInOut(.3)
+            });
+            return;
+        }
         var guid = RandomNumberGeneratorExtensions.RandomBase64Url();
         await _cache.SetStringAsync(guid, guid, new DistributedCacheEntryOptions
         {

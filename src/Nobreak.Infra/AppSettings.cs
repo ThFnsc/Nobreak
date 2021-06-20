@@ -11,5 +11,7 @@
         public int? BauldRate { get; set; }
 
         public bool RunMigrationsOnStartup { get; set; }
+
+        public bool RequireLoginToDownloadValues { get; set; }
     }
 }
