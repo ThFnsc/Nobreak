@@ -11,9 +11,16 @@ COPY tests/Nobreak.Tests/Nobreak.Tests.csproj tests/Nobreak.Tests/
 RUN dotnet restore
 COPY . .
 RUN dotnet test
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish --no-restore -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
+COPY --from=publish /app/publish/runtimes ./runtimes
+COPY --from=publish /app/publish/InstrumentationEngine ./InstrumentationEngine
+COPY --from=publish /app/publish/CodeCoverage ./CodeCoverage
+COPY --from=publish /app/publish/?? .
+COPY --from=publish /app/publish/??-??* .
+COPY --from=publish /app/publish/[^Nobreak]*.dll .
+COPY --from=publish /app/publish/wwwroot ./wwwroot
 COPY --from=publish /app/publish .
 ENTRYPOINT dotnet Nobreak.dll
