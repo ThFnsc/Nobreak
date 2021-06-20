@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nobreak.Infra.Context;
 
 namespace Nobreak.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class NobreakContextModelSnapshot : ModelSnapshot
+    [Migration("20210620025838_AccountEmailIndex")]
+    partial class AccountEmailIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

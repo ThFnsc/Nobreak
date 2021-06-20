@@ -2,7 +2,7 @@
 
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
-@inject IMemoryCache _cache
+@inject IDistributedCache _cache
 @inject NavigationManager _navManager
 
 <div class="w-100 mb-2 text-center">
@@ -68,8 +68,14 @@
 
     private async Task DownloadValues()
     {
-        var guid = Guid.NewGuid().ToString();
-        _cache.Set(guid, guid, TimeSpan.FromSeconds(10));
-        _navManager.NavigateTo($"Home/DownloadAllValues?token={guid}", true);
+        var guid = RandomNumberGeneratorExtensions.RandomBase64Url();
+        await _cache.SetStringAsync(guid, guid, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
+        });
+        _navManager.NavigateTo($"/DownloadValues", true, new
+        {
+            Token = guid
+        });
     }
 }

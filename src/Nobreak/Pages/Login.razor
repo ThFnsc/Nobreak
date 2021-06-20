@@ -1,0 +1,58 @@
+﻿@inject IDbContext _context
+@inject NavigationManager _navManager
+@inject IDistributedCache _cache
+
+<ReCAPTCHA OnAuthorized="CheckLogin">
+    <Content Context="recaptcha">
+        <EditForm Model="_loginModel" OnValidSubmit="recaptcha.Submit">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label><Name T="LoginModel" For="m => m.Email"></Name></label>
+                <InputText id="email" class="form-control" @bind-Value="_loginModel.Email"></InputText>
+                <ValidationMessage For="@(() => _loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label><Name T="LoginModel" For="m => m.Password"></Name></label>
+                <InputText type="password" id="password" class="form-control" @bind-Value="_loginModel.Password"></InputText>
+                <ValidationMessage For="@(() => _loginModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block my-2">
+                Entrar
+                @if (recaptcha.Processing)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+            </button>
+            @if (recaptcha.Success is not null && recaptcha.Success is not true)
+            {
+                <p class="text-danger">Não foi possível confirmar que você não é um robô 🤖</p>
+            }
+        </EditForm>
+    </Content>
+</ReCAPTCHA>
+
+@code {
+    private LoginModel _loginModel = new ();
+
+    private async Task CheckLogin()
+    {
+        var user = await _context.Accounts
+            .OfEmail(_loginModel.Email)
+            .FirstOrDefaultAsync();
+
+        if(user is not null)
+            if(user.PasswordHash == _loginModel.Password)
+            {
+                var token = RandomNumberGeneratorExtensions.RandomBase64Url();
+                await _cache.SetStringAsync(token, user.Id.ToString(), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow=TimeSpan.FromSeconds(10)
+                });
+                _navManager.NavigateTo($"/Authorize", true, new
+                {
+                    Token = token,
+                    ReturnUrl = new Uri(_navManager.Uri).PathAndQuery
+                });
+            }
+    }
+}

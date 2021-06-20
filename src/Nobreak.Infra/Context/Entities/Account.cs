@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -6,6 +7,7 @@ using System.Security.Cryptography;
 
 namespace Nobreak.Context.Entities
 {
+    [Index(nameof(Email))]
     public class Account : Entity
     {
         [Required]
