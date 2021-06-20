@@ -37,9 +37,9 @@
     <td>
         @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
         {
-            <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "success" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
-                @powerEvent.OnPurpose.SimNao()
-            </button>
+        <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "success" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
+            @(powerEvent.OnPurpose ? "Sim" : "Não")
+        </button>
         }
         else
         {

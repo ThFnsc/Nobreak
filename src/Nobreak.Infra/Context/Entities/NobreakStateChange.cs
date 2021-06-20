@@ -28,6 +28,6 @@ namespace Nobreak.Infra.Context.Entities
         }
 
         public override string ToString() =>
-            $"{NobreakState}; De propósito: {OnPurpose.SimNao()}; Duração: {Duration.Format()}";
+            $"{NobreakState}; De propósito: {(OnPurpose ? "sim" : "não")}; Duração: {Duration.Format()}";
     }
 }
