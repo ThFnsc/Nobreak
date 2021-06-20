@@ -2,7 +2,7 @@
 @inject NavigationManager _navManager
 @inject IDistributedCache _cache
 
-<ReCAPTCHA OnAuthorized="CheckLogin">
+<ReCAPTCHA OnAuthorized="CheckLogin" AllowIgnoreIfNotReady="true">
     <Content Context="recaptcha">
         <EditForm Model="_loginModel" OnValidSubmit="recaptcha.Submit">
             <DataAnnotationsValidator />

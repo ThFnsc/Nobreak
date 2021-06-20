@@ -35,13 +35,18 @@
 
     public async Task Submit()
     {
-        _state.Processing = true;
-        _state.Success = null;
-        var token = await _js.InvokeAsync<string>("getRecaptchaToken", _recaptcha.SiteKey, Action);
-        var success = await _recaptcha.PassedAsync(token.ToString(), Action);
-        _state.Success = success;
-        _state.Processing = false;
-        if (success)
+        if (_recaptcha.Ready)
+        {
+            _state.Processing = true;
+            _state.Success = null;
+            var token = await _js.InvokeAsync<string>("getRecaptchaToken", _recaptcha.SiteKey, Action);
+            var success = await _recaptcha.PassedAsync(token.ToString(), Action);
+            _state.Success = success;
+            _state.Processing = false;
+            if (success)
+                await OnAuthorized();
+        }
+        else if (AllowIgnoreIfNotReady)
             await OnAuthorized();
     }
 }

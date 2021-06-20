@@ -45,11 +45,11 @@ services:
       - ./keys:/root/.aspnet/DataProtection-Keys
     environment:
       Nobreak_ConnectionStrings__Default: server=mysql;port=3306;database=nobreak;user=root;password=Spvkfm7Cdj6Bv46KHF7KQ6R
-      Nobreak_ConnectionStrings__Redis: redis://redis:6379,password=n5kU2u7naxNHYVT49UA5DjQ
+      Nobreak_ConnectionStrings__Redis: redis,password=n5kU2u7naxNHYVT49UA5DjQ
       #Nobreak_AppSettings__RecaptchaSecret: 
       #Nobreak_AppSettings__RecaptchaSiteKey: 
       Nobreak_AppSettings__RunMigrationsOnStartup: "true"
-      Nobreak_AppSettings__RequireLoginToDownloadValues: "true"
+      Nobreak_AppSettings__RequireLoginToDownloadValues: "false"
       Nobreak_AppSettings__BauldRate: 9600
       #Nobreak_AppSettings__SerialPort: #Manual override
     depends_on: 
@@ -58,16 +58,11 @@ services:
       mysql:
         condition: service_healthy
     ports: 
-      - 80:80
+      - 3000:80
     #devices: 
       #- /dev/ttyACM0
     networks: 
       - db
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512MB
 
   mysql:
     image: mysql
@@ -79,13 +74,9 @@ services:
       MYSQL_ROOT_PASSWORD: Spvkfm7Cdj6Bv46KHF7KQ6R
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 2GB
+      timeout: 1s
+      interval: 1s
+      retries: 30
     networks:
       - db
 
@@ -93,17 +84,12 @@ services:
     image: redis:alpine
     restart: always
     command: redis-server --requirepass n5kU2u7naxNHYVT49UA5DjQ
-    deploy:
-      resources:
-        limits:
-          cpus: '.5'
-          memory: 128MB
     networks:
       - db
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
+      timeout: 1s
       interval: 1s
-      timeout: 3s
       retries: 30
 
 networks:

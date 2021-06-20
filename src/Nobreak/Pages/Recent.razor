@@ -7,7 +7,7 @@
 @inject IOptions<AppSettings> _appSettings
 
 <div class="w-100 mb-2 text-center">
-    <ReCAPTCHA OnAuthorized="DownloadValues">
+    <ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
         <Content Context="action">
             <button @onclick="action.Submit" class="btn btn-warning">
                 Baixar todo o histórico
