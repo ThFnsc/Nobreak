@@ -54,6 +54,9 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
 
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
     private UptimeReportViewModel _uptime;
 
     private async Task Reload()
@@ -72,7 +75,10 @@
             StateHasChanged();
         }
         else
-            _navManager.NavigateTo("/Account/Login", true);
+            Modal.Show<Login>("Login", new ModalOptions
+            {
+                Animation = ModalAnimation.FadeInOut(.3)
+            });
     }
 
     protected override Task OnInitializedAsync() =>

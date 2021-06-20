@@ -13,8 +13,7 @@ namespace Nobreak.Pages
 
             [Display(Name = "Senha")]
             [Required(ErrorMessage = "É necessário fornecer uma senha")]
-            [MinLength(8, ErrorMessage = "É necessário no mínimo 8 caracteres")]
-            //[RegularExpression(@"(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})", ErrorMessage = "É necessário pelo menos uma letra minúscula, uma maiúscula e um número")]
+            [RegularExpression("^((?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])|(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^a-zA-Z0-9])|(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])|(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^a-zA-Z0-9])).{8,}$", ErrorMessage = "Senha precisa ter no mínimo 8 caracteres e conter pelo menos 3 dessas 4 opções: letra maiúscula, letra minúscula, número e caractere especial")]
             public string Password { get; set; }
         }
     }

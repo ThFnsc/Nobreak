@@ -6,6 +6,10 @@
     <Content Context="recaptcha">
         <EditForm Model="_loginModel" OnValidSubmit="recaptcha.Submit">
             <DataAnnotationsValidator />
+            @if (_errorMessage is not null)
+            {
+                <div class="alert alert-danger">@_errorMessage</div>
+            }
             <div class="form-group">
                 <label><Name T="LoginModel" For="m => m.Email"></Name></label>
                 <InputText id="email" class="form-control" @bind-Value="_loginModel.Email"></InputText>
@@ -32,7 +36,9 @@
 </ReCAPTCHA>
 
 @code {
-    private LoginModel _loginModel = new ();
+    private LoginModel _loginModel = new();
+
+    private string _errorMessage;
 
     private async Task CheckLogin()
     {
@@ -40,19 +46,22 @@
             .OfEmail(_loginModel.Email)
             .FirstOrDefaultAsync();
 
-        if(user is not null)
-            if(user.PasswordHash == _loginModel.Password)
+        if (user is not null && user.PasswordHash == _loginModel.Password)
+        {
+            var token = RandomNumberGeneratorExtensions.RandomBase64Url();
+            await _cache.SetStringAsync(token, user.Id.ToString(), new DistributedCacheEntryOptions
             {
-                var token = RandomNumberGeneratorExtensions.RandomBase64Url();
-                await _cache.SetStringAsync(token, user.Id.ToString(), new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow=TimeSpan.FromSeconds(10)
-                });
-                _navManager.NavigateTo($"/Authorize", true, new
-                {
-                    Token = token,
-                    ReturnUrl = new Uri(_navManager.Uri).PathAndQuery
-                });
-            }
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
+            });
+            _navManager.NavigateTo($"/Authorize", true, new
+            {
+                Token = token,
+                ReturnUrl = new Uri(_navManager.Uri).PathAndQuery
+            });
+        }
+        else
+        {
+            _errorMessage = "Combinação de usuário e senha não reconhecida";
+        }
     }
 }
