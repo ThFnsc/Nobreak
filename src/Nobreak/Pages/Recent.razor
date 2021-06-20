@@ -6,11 +6,32 @@
 @inject NavigationManager _navManager
 @inject IOptions<AppSettings> _appSettings
 
-<div class="w-100 mb-2 text-center">
+<Table Source="_states">
+    <Head>
+        <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo"></Name></th>
+        <th><span class="oi oi-power-standby"></span> <Name T="NobreakStateViewModel" For="s=>s.PowerState"></Name></th>
+        <th><span class="oi oi-bolt"></span> <Name T="NobreakStateViewModel" For="s=>s.VoltageIn"></Name>/<Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
+        <th><span class="oi oi-lightbulb"></span> <Name T="NobreakStateViewModel" For="s=>s.LoadPercentage"></Name></th>
+        <th><span class="oi oi-battery-full"></span> <Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage"></Name></th>
+    </Head>
+    <Body Context="state">
+        <td>@(new TimeSpan(Math.Max(TimeSpan.Zero.Ticks, state.TimeAgo.Ticks)).Format())</td>
+        <td>
+            <span class="badge badge-@(state.PowerState == Context.Entities.PowerStates.Grid ? "success":"danger")">
+                @(state.PowerState.GetDisplayName())
+            </span>
+        </td>
+        <td>@(state.VoltageIn)v <span class="oi oi-arrow-thick-right"></span> @(state.VoltageOut)v @@ @(state.FrequencyHz)hz</td>
+        <td>@(state.LoadPercentage)% @(state.TemperatureC)ºC</td>
+        <td>@(state.BatteryVoltage)v (@(state.BatteryPercentage)%)</td>
+    </Body>
+</Table>
+
+<div class="w-100 mb-5 text-center">
     <ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
         <Content Context="action">
             <button @onclick="action.Submit" class="btn btn-warning">
-                Baixar todo o histórico
+                <span class="oi oi-data-transfer-download"></span> Baixar todo o histórico
                 @if (action.Success is not null)
                 {
                     if (action.Success.Value)
@@ -31,28 +52,6 @@
     </ReCAPTCHA>
 </div>
 
-<Table Source="_states">
-    <Head>
-        <th><Name T="NobreakStateViewModel" For="s=>s.Timestamp"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.PowerState"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageIn"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.LoadPercentage"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.FrequencyHz"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage"></Name></th>
-        <th><Name T="NobreakStateViewModel" For="s=>s.TemperatureC"></Name></th>
-    </Head>
-    <Body Context="state">
-        <td>@(state.Timestamp.Format(true)) (há @(new TimeSpan(Math.Max(TimeSpan.Zero.Ticks, state.TimeAgo.Ticks)).Format()))</td>
-        <td>@(state.PowerState.GetDisplayName())</td>
-        <td>@(state.VoltageIn)v</td>
-        <td>@(state.VoltageOut)v</td>
-        <td>@(state.LoadPercentage)%</td>
-        <td>@(state.FrequencyHz)hz</td>
-        <td>@(state.BatteryVoltage)v (@(state.BatteryPercentage)%)</td>
-        <td>@(state.TemperatureC)ºC</td>
-    </Body>
-</Table>
 <Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
 
 @code {
@@ -78,10 +77,7 @@
     {
         if (_appSettings.Value.RequireLoginToDownloadValues && !(await authenticationStateTask).User.Identity.IsAuthenticated)
         {
-            Modal.Show<Login>("Login", new ModalOptions
-            {
-                Animation = ModalAnimation.FadeInOut(.3)
-            });
+            Modal.Show<Login>("Login");
             return;
         }
         var guid = RandomNumberGeneratorExtensions.RandomBase64Url();

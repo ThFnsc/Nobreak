@@ -10,7 +10,7 @@ COPY src/Nobreak.Infra/Nobreak.Infra.csproj src/Nobreak.Infra/
 COPY tests/Nobreak.Tests/Nobreak.Tests.csproj tests/Nobreak.Tests/
 RUN dotnet restore
 COPY . .
-RUN dotnet test
+RUN dotnet test --no-restore
 RUN dotnet publish --no-restore -c Release -o /app/publish
 
 FROM base AS final

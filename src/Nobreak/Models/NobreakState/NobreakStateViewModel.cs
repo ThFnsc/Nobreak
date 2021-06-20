@@ -7,6 +7,8 @@ namespace Nobreak.Models
 {
     public class NobreakStateViewModel
     {
+        public long Id { get; set; }
+
         [Display(Name = "Ocorreu em")]
         public DateTime Timestamp { get; set; }
 

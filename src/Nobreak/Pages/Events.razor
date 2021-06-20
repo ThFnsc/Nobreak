@@ -3,49 +3,68 @@
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
 @inject NavigationManager _navManager
+@using Context.Entities
 
 <h2>Uptime</h2>
-<Table Source="_uptime?.UptimePerIntervals">
-    <Head>
-    <th><Name T="UptimeInIntervalViewModel" For="s=>s.TimeSpan"></Name></th>
-    @foreach (var possibleState in _uptime?.PossibleStates.AsEnumerable() ?? Array.Empty<Context.Entities.PowerStates>())
-    {
-        <th>@possibleState.GetDisplayName()</th>
-    }
-    </Head>
-    <Body Context="state">
-    <td>@state.TimeSpan.Format()</td>
-    @foreach (var state in state.UptimeStates)
-    {
-        <td>@state.ShareTimespan.Format() (@state.SharePercentage.ToString("0.0000")%)</td>
-    }
-    </Body>
-</Table>
+
+@if (_uptime?.UptimePerIntervals is not null)
+{
+    var mainMeasurement = Context.Entities.PowerStates.Grid;
+    <div class="row">
+        @foreach (var intervalState in _uptime.UptimePerIntervals)
+        {
+            var mainState = intervalState.UptimeStates.Single(s => s.PowerState == mainMeasurement);
+            var color = "success";
+            if (mainState.SharePercentage <= 99.5)
+                color = "danger";
+            else if (mainState.SharePercentage <= 99.8)
+                color = "warning";
+            <div class="col-xs-12 col-md-6 col-xl-3 p-1">
+                <div class="card h-100 text-white bg-@color mb-1">
+                    <div class="card-header">
+                        <span>@intervalState.TimeSpan.Format()</span>
+                        <span class="float-right"><b>@mainState.SharePercentage.ToString("0.0000")%</b></span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var state in intervalState.UptimeStates)
+                        {
+                            <li class="list-group-item bg-@color">
+                                <b>@state.PowerState.GetDisplayName():</b> @state.SharePercentage.ToString("0.0000")% (@state.ShareTimespan.Format())
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <Loader></Loader>
+}
+
 
 <h2>Eventos</h2>
+
 <Table Source="_uptime?.StateChanges">
     <Head>
-    <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>
-    <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp"></Name></th>
-    <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration"></Name></th>
-    <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose"></Name></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp"></Name></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration"></Name></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose"></Name></th>
     </Head>
     <Body Context="powerEvent">
-    <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
-    <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
-    <td>@powerEvent.Duration.Format()</td>
-    <td>
-        @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
-        {
-        <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "success" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
-            @(powerEvent.OnPurpose ? "Sim" : "Não")
-        </button>
-        }
-        else
-        {
-            <text>-</text>
-        }
-    </td>
+        <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
+        <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
+        <td>@powerEvent.Duration.Format()</td>
+        <td>
+            @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
+            {
+                <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "warning" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
+                    @(powerEvent.OnPurpose ? "Acidental" : "Queda")
+                </button>
+            }
+        </td>
     </Body>
 </Table>
 <Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
@@ -75,10 +94,7 @@
             await Reload();
         }
         else
-            Modal.Show<Login>("Login", new ModalOptions
-            {
-                Animation = ModalAnimation.FadeInOut(.3)
-            });
+            Modal.Show<Login>("Login");
     }
 
     protected override Task OnInitializedAsync() =>

@@ -23,7 +23,7 @@ namespace Nobreak.Infra.Services.Report
 
         public UptimeReport()
         {
-            CalculatedOn = DateTime.Now;
+            CalculatedOn = DateTime.UtcNow;
             RelevantTimespans = new List<TimeSpan>
                 {
                     TimeSpan.FromHours(5),

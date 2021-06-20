@@ -9,7 +9,7 @@ namespace Nobreak.Models
     {
         public int Id { get; set; }
 
-        [Display(Name = "De propósito")]
+        [Display(Name = "Válido")]
         public bool OnPurpose { get; set; }
 
         public PowerStates PowerState { get; set; }

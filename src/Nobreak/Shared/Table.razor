@@ -4,7 +4,7 @@
 {
     if (Loading is null)
     {
-        <div class="alert alert-info">Carregando...</div>
+        <Loader></Loader>
     }
     else
     {
@@ -24,16 +24,20 @@ else if (!Source.Any())
 }
 else
 {
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped table-dark">
         <thead>
             <tr>
                 @Head
             </tr>
         </thead>
         <tbody>
+            @if (InvertStripe)
+            {
+                <tr style="height:0!important;"></tr>
+            }
             @foreach (var item in Source)
             {
-                <tr>
+                <tr class="bg-@(RowColor?.Invoke(item))">
                     @Body(item)
                 </tr>
             }
@@ -56,4 +60,10 @@ else
 
     [Parameter]
     public IEnumerable<T> Source { get; set; }
+
+    [Parameter]
+    public Func<T, string> RowColor { get; set; }
+
+    [Parameter]
+    public bool InvertStripe { get; set; }
 }
