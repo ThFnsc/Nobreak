@@ -12,6 +12,8 @@ namespace Nobreak.Helpers
 
         public string MissingTokenErrorMessage { get; set; }
 
+        public string Action { get; set; } = "login";
+
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var validator = context.HttpContext.RequestServices.GetRequiredService<IReCaptchaValidator>();
@@ -24,7 +26,7 @@ namespace Nobreak.Helpers
                     throw new Exception("Model does not implement " + nameof(IReCaptchaRequired));
                 if (string.IsNullOrWhiteSpace(reCaptchaModel.ReCaptchaToken))
                     context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), MissingTokenErrorMessage ?? InvalidTokenErrorMessage);
-                else if (!await validator.Passed(reCaptchaModel.ReCaptchaToken))
+                else if (!await validator.PassedAsync(reCaptchaModel.ReCaptchaToken, Action))
                     context.ModelState.AddModelError(nameof(reCaptchaModel.ReCaptchaToken), InvalidTokenErrorMessage);
             }
 

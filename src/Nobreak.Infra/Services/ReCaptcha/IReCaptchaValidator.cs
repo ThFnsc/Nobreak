@@ -4,7 +4,7 @@ namespace Nobreak.Infra.Services.ReCaptcha
 {
     public interface IReCaptchaValidator
     {
-        Task<bool> Passed(string token);
+        Task<bool> PassedAsync(string token, string action);
         string SiteKey { get; }
         bool Ready { get; }
     }

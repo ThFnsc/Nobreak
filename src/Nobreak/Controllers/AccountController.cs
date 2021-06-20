@@ -45,14 +45,15 @@ namespace Nobreak.Controllers
                 if (user != null && model.Password == user.PasswordHash)
                 {
                     var principal = new ClaimsPrincipal(new ClaimsIdentity(user.Claims(), CookieAuthenticationDefaults.AuthenticationScheme));
-                    await HttpContext.SignInAsync(principal, new AuthenticationProperties { 
-                        AllowRefresh=true,
-                        IsPersistent=true,
-                        ExpiresUtc=DateTimeOffset.Now.AddMonths(1)
+                    await HttpContext.SignInAsync(principal, new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.Now.AddMonths(1)
                     });
                     HttpContext.User = principal;
                     return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
-                        ? Redirect(returnUrl) 
+                        ? Redirect(returnUrl)
                         : Redirect("/");
                 }
                 else if (!await _context.Accounts.AnyAsync())

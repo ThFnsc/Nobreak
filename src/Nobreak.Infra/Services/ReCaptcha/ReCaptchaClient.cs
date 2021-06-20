@@ -25,7 +25,7 @@ namespace Nobreak.Infra.Services.ReCaptcha
             _logger = logger;
         }
 
-        public async Task<bool> Passed(string token)
+        public async Task<bool> PassedAsync(string token, string action)
         {
             if (!Ready)
             {
@@ -50,7 +50,7 @@ namespace Nobreak.Infra.Services.ReCaptcha
                 }.ConvertToDictionary()
             });
 
-            if (!res.Ok("login"))
+            if (!res.Ok(action))
             {
                 _logger.LogWarning("Não passou no ReCaptcha: {Model}\nToken: {Token}", res.ToJson(), token);
                 return false;

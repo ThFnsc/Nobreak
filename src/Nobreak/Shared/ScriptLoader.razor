@@ -1,0 +1,26 @@
+﻿@inject IJSRuntime _js
+@code {
+    [Parameter]
+    public string Src { get; set; }
+
+    [Parameter]
+    public Func<Task> OnLoad { get; set; }
+
+    [Parameter]
+    public Func<Task> OnFail { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await _js.InvokeVoidAsync("loadScript", Src);
+            if(OnLoad is not null)
+                await OnLoad();
+        }
+        catch (Exception)
+        {
+            if (OnFail is not null)
+                await OnFail();
+        }
+    }
+}
