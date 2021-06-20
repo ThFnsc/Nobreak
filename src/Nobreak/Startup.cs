@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Nobreak.Configuration;
-using Nobreak.Infra;
 using Nobreak.Infra.Context;
 
 namespace Nobreak

@@ -43,7 +43,7 @@
         <th><Name T="NobreakStateViewModel" For="s=>s.TemperatureC"></Name></th>
     </Head>
     <Body Context="state">
-        <td>@(state.Timestamp.Format()) (há @state.TimeAgo.Format())</td>
+        <td>@(state.Timestamp.Format(true)) (há @(new TimeSpan(Math.Max(TimeSpan.Zero.Ticks, state.TimeAgo.Ticks)).Format()))</td>
         <td>@(state.PowerState.GetDisplayName())</td>
         <td>@(state.VoltageIn)v</td>
         <td>@(state.VoltageOut)v</td>

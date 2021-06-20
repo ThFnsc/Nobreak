@@ -32,7 +32,7 @@ namespace Nobreak.Infra.Services
         }
 
         public async Task<UptimeReport> GetUptimeReportAsync() =>
-            await _memoryCache.GetWithServiceAsync<UptimeReport, IDbContext>(_serviceProvider, _uptimeEntry, UptimeReport.Calculate, TimeSpan.FromSeconds(2));
+            await _memoryCache.GetWithServiceAsync<UptimeReport, IDbContext>(_serviceProvider, _uptimeEntry, UptimeReport.Calculate, TimeSpan.FromSeconds(1));
 
         public async Task<List<NobreakState>> GetRecentValuesAsync() =>
             await _memoryCache.GetWithServiceAsync<List<NobreakState>, IDbContext>(_serviceProvider, _recentValuesEntry, async context =>
@@ -40,10 +40,10 @@ namespace Nobreak.Infra.Services
                 var since = DateTime.Now - TimeSpan.FromDays(1);
                 return await context.NobreakStates
                     .AsNoTracking()
-                    .Where(s => (s.Id % 300 == 0 || s.Id > context.NobreakStates.Max(ss => ss.Id) - 30) && s.Timestamp >= since)
                     .OrderByDescending(s => s.Timestamp)
+                    .Take(60)
                     .ToListAsync();
-            }, TimeSpan.FromSeconds(2));
+            }, TimeSpan.FromSeconds(1));
 
         public async Task GetAllValuesAsync(Stream writeTo)
         {
@@ -56,7 +56,8 @@ namespace Nobreak.Infra.Services
                 using var context = scope.ServiceProvider.GetRequiredService<IDbContext>();
                 using var changesStream = changesEntry.Open();
                 var jsonSettings = new JsonSerializerOptions();
-                jsonSettings.Converters.AddRange(new JsonStringEnumConverter(), new TimespanConverter());
+                jsonSettings.Converters.Add(new JsonStringEnumConverter());
+                jsonSettings.Converters.Add(new TimespanConverter());
                 jsonSettings.IgnoreReadOnlyProperties = true;
                 await JsonSerializer.SerializeAsync(changesStream, source(context), jsonSettings);
             }

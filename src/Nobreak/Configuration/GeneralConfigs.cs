@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Nobreak.Infra;
 
 namespace Nobreak.Configuration
 {

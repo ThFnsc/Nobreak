@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Nobreak.Infra.Extensions;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -16,7 +17,7 @@ namespace Nobreak.Tests
         }
 
         private string RandomString() =>
-            Infra.Services.Helpers.RandomBase64(_random.Next(10, 32));
+            RandomNumberGeneratorExtensions.RandomBase64Url(_random.Next(10, 32));
 
         [TestMethod]
         public void ShouldPredictEqualitiesCorrectly()

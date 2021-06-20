@@ -1,4 +1,4 @@
-﻿namespace Nobreak.Infra
+﻿namespace Nobreak
 {
     public class AppSettings
     {

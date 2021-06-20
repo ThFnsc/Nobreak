@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -35,7 +36,7 @@ namespace Nobreak.Context.Entities
                 new Claim(ClaimTypes.Name, Name),
                 new Claim(ClaimTypes.Email, Email),
                 new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
-                new Claim("FirstName", Name.FirstWord())
+                new Claim("FirstName", Name.Split(' ',1).FirstOrDefault())
             };
     }
 }
