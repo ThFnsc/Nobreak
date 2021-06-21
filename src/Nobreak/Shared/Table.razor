@@ -35,11 +35,22 @@ else
             {
                 <tr style="height:0!important;"></tr>
             }
-            @foreach (var item in Source)
+            @if (Virtualize)
             {
-                <tr class="bg-@(RowColor?.Invoke(item))">
-                    @Body(item)
-                </tr>
+                <Virtualize TItem="T" Context="item" Items="Source">
+                    <tr class="bg-@(RowColor?.Invoke(item))">
+                        @Body(item)
+                    </tr>
+                </Virtualize>
+            }
+            else
+            {
+                @foreach (var item in Source)
+                {
+                    <tr class="bg-@(RowColor?.Invoke(item))">
+                        @Body(item)
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -59,11 +70,14 @@ else
     public RenderFragment Loading { get; set; }
 
     [Parameter]
-    public IEnumerable<T> Source { get; set; }
+    public ICollection<T> Source { get; set; }
 
     [Parameter]
     public Func<T, string> RowColor { get; set; }
 
     [Parameter]
     public bool InvertStripe { get; set; }
+
+    [Parameter]
+    public bool Virtualize { get; set; }
 }

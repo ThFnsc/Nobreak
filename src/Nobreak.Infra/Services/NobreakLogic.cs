@@ -41,7 +41,7 @@ namespace Nobreak.Infra.Services
                 return await context.NobreakStates
                     .AsNoTracking()
                     .OrderByDescending(s => s.Timestamp)
-                    .Take(60)
+                    .Take(10000)
                     .ToListAsync();
             }, TimeSpan.FromSeconds(1));
 

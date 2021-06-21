@@ -6,7 +6,7 @@
 @inject NavigationManager _navManager
 @inject IOptions<AppSettings> _appSettings
 
-<Table Source="_states">
+<Table Source="_states" Virtualize="true">
     <Head>
         <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo" /></th>
         <th><span class="oi oi-power-standby"></span> <Name T="NobreakStateViewModel" For="s=>s.PowerState" /></th>
@@ -55,7 +55,7 @@
 <Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)" />
 
 @code {
-    private List<NobreakStateViewModel> _states;
+    private List<NobreakStateViewModel> _states = new();
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }

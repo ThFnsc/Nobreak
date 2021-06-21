@@ -49,7 +49,7 @@
 
     <h2 class="mt-4">Eventos</h2>
 </div>
-<Table Source="_uptime?.StateChanges">
+<Table Source="_uptime?.StateChanges" Virtualize="true">
     <Head>
         <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState" /></th>
         <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp" /></th>
