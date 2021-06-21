@@ -1,13 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Nobreak.Context.Entities;
 using Nobreak.Extensions;
 using Nobreak.Infra.Context;
 using Nobreak.Infra.Context.Entities;
 using Nobreak.Infra.Services.Report;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -23,27 +20,18 @@ namespace Nobreak.Infra.Services
         private static readonly string _uptimeEntry = nameof(_uptimeEntry);
 
         private readonly IServiceProvider _serviceProvider;
-        private readonly IMemoryCache _memoryCache;
+        private readonly IDbContext _context;
 
-        public NobreakLogic(IServiceProvider serviceProvider, IMemoryCache memoryCache)
+        public NobreakLogic(
+            IServiceProvider serviceProvider,
+            IDbContext context)
         {
             _serviceProvider = serviceProvider;
-            _memoryCache = memoryCache;
+            _context = context;
         }
 
-        public async Task<UptimeReport> GetUptimeReportAsync() =>
-            await _memoryCache.GetWithServiceAsync<UptimeReport, IDbContext>(_serviceProvider, _uptimeEntry, UptimeReport.Calculate, TimeSpan.FromSeconds(1));
-
-        public async Task<List<NobreakState>> GetRecentValuesAsync() =>
-            await _memoryCache.GetWithServiceAsync<List<NobreakState>, IDbContext>(_serviceProvider, _recentValuesEntry, async context =>
-            {
-                var since = DateTime.Now - TimeSpan.FromDays(1);
-                return await context.NobreakStates
-                    .AsNoTracking()
-                    .OrderByDescending(s => s.Timestamp)
-                    .Take(10000)
-                    .ToListAsync();
-            }, TimeSpan.FromSeconds(1));
+        public Task<UptimeReport> GetUptimeReportAsync() =>
+            UptimeReport.Calculate(_context);
 
         public async Task GetAllValuesAsync(Stream writeTo)
         {
@@ -66,12 +54,6 @@ namespace Nobreak.Infra.Services
             await SerializeTo($"readings.json", context => context.NobreakStates.AsNoTracking());
         }
 
-        public void ClearCache()
-        {
-            _memoryCache.Remove(_recentValuesEntry);
-            _memoryCache.Remove(_uptimeEntry);
-        }
-
         public async Task<NobreakStateChange> ToggleOnPurposeAsync(int id)
         {
             using var scope = _serviceProvider.CreateScope();
@@ -81,7 +63,6 @@ namespace Nobreak.Infra.Services
                 .SingleAsync(s => s.Id == id);
             evt.OnPurpose = !evt.OnPurpose;
             await context.SaveChangesAsync();
-            ClearCache();
             return evt;
         }
     }

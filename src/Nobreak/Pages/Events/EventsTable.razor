@@ -1,6 +1,7 @@
 ﻿@using Nobreak.Context.Entities
 
 @inject INobreakProvider _nobreak
+@inject IAppCache _cache
 
 <Table Source="Uptime?.StateChanges" Virtualize="true">
     <Head>
@@ -43,6 +44,7 @@
         if (auth.User.Identity.IsAuthenticated)
         {
             await _nobreak.ToggleOnPurposeAsync(id);
+            _cache.Remove(typeof(Events).FullName);
             await ReloadValues.InvokeAsync();
         }
         else

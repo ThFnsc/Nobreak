@@ -2,6 +2,7 @@
 
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
+@inject IAppCache _cache
 
 <div class="p-3">
     <h2>Uptimes</h2>
@@ -17,8 +18,14 @@
 
     private async Task Reload()
     {
-        var uptime = await _nobreak.GetUptimeReportAsync();
-        _uptime = _mapper.Map<UptimeReportViewModel>(uptime);
+        _uptime = await _cache.GetOrAddAsync<UptimeReportViewModel>(
+            key: typeof(Events).FullName,
+            addItemFactory: async () =>
+                _mapper.Map<UptimeReportViewModel>(await _nobreak.GetUptimeReportAsync()),
+            policy: new()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(1)
+            });
         await InvokeAsync(StateHasChanged);
     }
 

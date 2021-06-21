@@ -1,10 +1,12 @@
 ﻿@page "/Recent"
 
-@inject INobreakProvider _nobreak
 @inject IMapper _mapper
+@inject IAppCache _cache
+@inject IDbContext _context
 
 <Table Source="_states" Virtualize="true">
     <Head>
+        <th><span class="oi oi-tag"></span> <Name T="NobreakStateViewModel" For="s=>s.Id" /></th>
         <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo" /></th>
         <th><span class="oi oi-power-standby"></span> <Name T="NobreakStateViewModel" For="s=>s.PowerState" /></th>
         <th><span class="oi oi-bolt"></span> <Name T="NobreakStateViewModel" For="s=>s.VoltageIn" />/<Name T="NobreakStateViewModel" For="s=>s.VoltageOut" /></th>
@@ -12,6 +14,7 @@
         <th><span class="oi oi-battery-full"></span> <Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage" /></th>
     </Head>
     <Body Context="state">
+        <td>@state.Id</td>
         <td>@(new TimeSpan(Math.Max(TimeSpan.Zero.Ticks, state.TimeAgo.Ticks)).Format())</td>
         <td>
             <span class="badge badge-@(state.PowerState == Context.Entities.PowerStates.Grid ? "success":"danger")">
@@ -31,8 +34,18 @@
 
     private async Task Reload()
     {
-        var recentValues = await _nobreak.GetRecentValuesAsync();
-        _states = _mapper.Map<List<NobreakStateViewModel>>(recentValues);
+        _states = await _cache.GetOrAddAsync<List<NobreakStateViewModel>>(
+            key: typeof(Recent).FullName,
+            addItemFactory: () => _context.NobreakStates
+                .AsNoTracking()
+                .OrderByDescending(s => s.Timestamp)
+                .ProjectTo<NobreakStateViewModel>(_mapper.ConfigurationProvider)
+                .Take(10000)
+                .ToListAsync(),
+            policy: new()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(1)
+            });
         await InvokeAsync(StateHasChanged);
     }
 

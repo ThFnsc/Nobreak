@@ -25,7 +25,7 @@ namespace Nobreak.Configuration
                 logger.LogInformation("Using Redis as distributed cache");
             }
 
-            services.AddMemoryCache();
+            services.AddLazyCache();
             return services;
         }
     }

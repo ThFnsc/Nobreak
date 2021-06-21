@@ -10,7 +10,7 @@ namespace Nobreak.Configuration
     {
         public static IServiceCollection AddDependencyInjectionConfigs(this IServiceCollection services)
         {
-            services.AddSingleton<INobreakProvider, NobreakLogic>();
+            services.AddScoped<INobreakProvider, NobreakLogic>();
 
             services.AddHostedService(provider =>
             {
