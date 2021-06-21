@@ -5,49 +5,50 @@
 @inject NavigationManager _navManager
 @using Context.Entities
 
-<h2>Uptime</h2>
+<div class="p-3">
+    <h2>Uptime</h2>
 
-@if (_uptime?.UptimePerIntervals is not null)
-{
-    var mainMeasurement = Context.Entities.PowerStates.Grid;
-    <div class="row">
-        @foreach (var intervalState in _uptime.UptimePerIntervals)
-        {
-            var mainState = intervalState.UptimeStates.Single(s => s.PowerState == mainMeasurement);
-            var color = "success";
-            if (mainState.SharePercentage <= 99.5)
-                color = "danger";
-            else if (mainState.SharePercentage <= 99.8)
-                color = "warning";
-            <div class="col-xs-12 col-md-6 col-xl-3 p-1">
-                <div class="card h-100 text-white bg-@color mb-1">
-                    <div class="card-header">
-                        <b>
-                            <span>@intervalState.TimeSpan.Format()</span>
-                            <span class="float-right">@mainState.SharePercentage.ToString("0.0000")%</span>
-                        </b>
+    @if (_uptime?.UptimePerIntervals is not null)
+    {
+        var mainMeasurement = Context.Entities.PowerStates.Grid;
+        <div class="row m-0 w-100">
+            @foreach (var intervalState in _uptime.UptimePerIntervals)
+            {
+                var mainState = intervalState.UptimeStates.Single(s => s.PowerState == mainMeasurement);
+                var color = "success";
+                if (mainState.SharePercentage <= 99.5)
+                    color = "danger";
+                else if (mainState.SharePercentage <= 99.8)
+                    color = "warning";
+                <div class="col-xs-12 col-md-6 col-xl-3 p-1">
+                    <div class="card h-100 text-white bg-@color mb-1">
+                        <div class="card-header">
+                            <b>
+                                <span>@intervalState.TimeSpan.Format()</span>
+                                <span class="float-right">@mainState.SharePercentage.ToString("0.0000")%</span>
+                            </b>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var state in intervalState.UptimeStates)
+                            {
+                                <li class="list-group-item bg-@color">
+                                    <b>@state.PowerState.GetDisplayName():</b> @state.SharePercentage.ToString("0.0000")% (@state.ShareTimespan.Format())
+                                </li>
+                            }
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        @foreach (var state in intervalState.UptimeStates)
-                        {
-                            <li class="list-group-item bg-@color">
-                                <b>@state.PowerState.GetDisplayName():</b> @state.SharePercentage.ToString("0.0000")% (@state.ShareTimespan.Format())
-                            </li>
-                        }
-                    </ul>
                 </div>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <Loader></Loader>
-}
+            }
+        </div>
+    }
+    else
+    {
+        <Loader></Loader>
+    }
 
 
-<h2 class="mt-4">Eventos</h2>
-
+    <h2 class="mt-4">Eventos</h2>
+</div>
 <Table Source="_uptime?.StateChanges">
     <Head>
         <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>

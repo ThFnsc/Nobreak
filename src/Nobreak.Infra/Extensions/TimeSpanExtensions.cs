@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace System
 {
@@ -8,7 +7,7 @@ namespace System
     {
         private static KeyValuePair<string, double>[] _timeUnits;
 
-        public static string Format(this TimeSpan span, int limitUnits=2)
+        public static string Format(this TimeSpan span, int limitUnits = 2)
         {
             if (_timeUnits == null)
             {

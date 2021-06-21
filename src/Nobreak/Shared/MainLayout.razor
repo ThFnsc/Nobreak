@@ -7,13 +7,11 @@
     </div>
 
     <div class="main">
-        <div class="content px-4">
-            @if (_noUsers)
-            {
-                <div class="alert alert-warning">Nenhum usuário cadastrado ainda. <button class="btn btn-warning" @onclick="SignUp">Cadastrar</button></div>
-            }
-            @Body
-        </div>
+        @if (_noUsers)
+        {
+            <div class="alert alert-warning p-4">Nenhum usuário cadastrado ainda. <button class="btn btn-warning" @onclick="SignUp">Cadastrar</button></div>
+        }
+        @Body
     </div>
 </div>
 
