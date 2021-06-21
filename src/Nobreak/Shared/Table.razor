@@ -37,7 +37,7 @@ else
             }
             @if (Virtualize)
             {
-                <Virtualize TItem="T" Context="item" OverscanCount="50" Items="Source">
+                <Virtualize TItem="T" Context="item" OverscanCount="10" Items="Source">
                     <tr class="bg-@(RowColor?.Invoke(item))">
                         @Body(item)
                     </tr>
