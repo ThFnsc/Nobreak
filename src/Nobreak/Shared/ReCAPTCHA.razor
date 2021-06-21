@@ -5,7 +5,7 @@
 @if (_recaptcha.Ready)
 {
     var url = $"https://www.google.com/recaptcha/api.js?render={_recaptcha.SiteKey}";
-    <ScriptLoader Src="@url"></ScriptLoader>
+    <ScriptLoader Src="@url" />
 }
 @if(_recaptcha.Ready || AllowIgnoreIfNotReady)
 {

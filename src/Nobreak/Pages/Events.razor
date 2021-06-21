@@ -43,7 +43,7 @@
     }
     else
     {
-        <Loader></Loader>
+        <Loader />
     }
 
 
@@ -51,10 +51,10 @@
 </div>
 <Table Source="_uptime?.StateChanges">
     <Head>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration"></Name></th>
-        <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose"></Name></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose" /></th>
     </Head>
     <Body Context="powerEvent">
         <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
@@ -70,7 +70,7 @@
         </td>
     </Body>
 </Table>
-<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
+<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)" />
 
 @code {
     [CascadingParameter]

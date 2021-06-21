@@ -15,13 +15,13 @@
                 <p class="text-danger">Não foi possível confirmar que você não é um robô 🤖</p>
             }
             <div class="form-group">
-                <label><Name T="LoginModel" For="m => m.Email"></Name></label>
-                <InputText id="email" class="form-control" @bind-Value="_loginModel.Email"></InputText>
+                <label><Name T="LoginModel" For="m => m.Email" /></label>
+                <InputText id="email" class="form-control" @bind-Value="_loginModel.Email" />
                 <ValidationMessage For="@(() => _loginModel.Email)" />
             </div>
             <div class="form-group">
-                <label><Name T="LoginModel" For="m => m.Password"></Name></label>
-                <InputText type="password" id="password" class="form-control" @bind-Value="_loginModel.Password"></InputText>
+                <label><Name T="LoginModel" For="m => m.Password" /></label>
+                <InputText type="password" id="password" class="form-control" @bind-Value="_loginModel.Password" />
                 <ValidationMessage For="@(() => _loginModel.Password)" />
             </div>
             <button type="submit" class="btn btn-primary btn-block my-2">

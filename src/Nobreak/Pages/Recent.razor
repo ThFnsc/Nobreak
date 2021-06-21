@@ -8,11 +8,11 @@
 
 <Table Source="_states">
     <Head>
-        <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo"></Name></th>
-        <th><span class="oi oi-power-standby"></span> <Name T="NobreakStateViewModel" For="s=>s.PowerState"></Name></th>
-        <th><span class="oi oi-bolt"></span> <Name T="NobreakStateViewModel" For="s=>s.VoltageIn"></Name>/<Name T="NobreakStateViewModel" For="s=>s.VoltageOut"></Name></th>
-        <th><span class="oi oi-lightbulb"></span> <Name T="NobreakStateViewModel" For="s=>s.LoadPercentage"></Name></th>
-        <th><span class="oi oi-battery-full"></span> <Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage"></Name></th>
+        <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo" /></th>
+        <th><span class="oi oi-power-standby"></span> <Name T="NobreakStateViewModel" For="s=>s.PowerState" /></th>
+        <th><span class="oi oi-bolt"></span> <Name T="NobreakStateViewModel" For="s=>s.VoltageIn" />/<Name T="NobreakStateViewModel" For="s=>s.VoltageOut" /></th>
+        <th><span class="oi oi-lightbulb"></span> <Name T="NobreakStateViewModel" For="s=>s.LoadPercentage" /></th>
+        <th><span class="oi oi-battery-full"></span> <Name T="NobreakStateViewModel" For="s=>s.BatteryVoltage" /></th>
     </Head>
     <Body Context="state">
         <td>@(new TimeSpan(Math.Max(TimeSpan.Zero.Ticks, state.TimeAgo.Ticks)).Format())</td>
@@ -52,7 +52,7 @@
     </ReCAPTCHA>
 </div>
 
-<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)"></Timer>
+<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)" />
 
 @code {
     private List<NobreakStateViewModel> _states;
