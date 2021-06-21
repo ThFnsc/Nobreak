@@ -32,8 +32,10 @@
             <button onclick="location.reload()" class="btn btn-primary btn-lg mt-2">Recarregar</button>
         </div>
         <div class="rejected p-5">
-            <h1>Conexão reestabelecida! Mas você precisa recarregar a página...</h1>
-            <button onclick="location.reload()" class="btn btn-primary btn-lg mt-2">Recarregar</button>
+            <h1>Conexão reestabelecida! Recarregando...</h1>
+            <a href="javascript:location.reload()" class="mt-2">Clique aqui caso o recarregamento automático não funcionar</a>
+            <br />
+            <div class="spinner-grow" role="status"></div>
         </div>
     </div>
 
@@ -51,5 +53,8 @@
 
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Blazored.Modal/blazored.modal.js"></script>
+    <script>
+        Blazor.defaultReconnectionHandler._reconnectCallback = function () { document.location.reload(); };
+    </script>
 </body>
 </html>
