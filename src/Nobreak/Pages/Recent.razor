@@ -6,6 +6,29 @@
 @inject NavigationManager _navManager
 @inject IOptions<AppSettings> _appSettings
 
+<ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
+    <Content Context="action">
+        <button @onclick="action.Submit" class="btn btn-warning float-right m-2">
+            <span class="oi oi-data-transfer-download"></span> Baixar todo o histórico
+            @if (action.Success is not null)
+            {
+                if (action.Success.Value)
+                {
+                    <span class="oi oi-check"></span>
+                }
+                else
+                {
+                    <span class="oi oi-circle-x"></span>
+                }
+            }
+            else if (action.Processing)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+        </button>
+    </Content>
+</ReCAPTCHA>
+
 <Table Source="_states" Virtualize="true">
     <Head>
         <th><span class="oi oi-clock"></span> <Name T="NobreakStateViewModel" For="s=>s.TimeAgo" /></th>
@@ -26,31 +49,6 @@
         <td>@(state.BatteryVoltage)v (@(state.BatteryPercentage)%)</td>
     </Body>
 </Table>
-
-<div class="w-100 mb-5 text-center">
-    <ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
-        <Content Context="action">
-            <button @onclick="action.Submit" class="btn btn-warning">
-                <span class="oi oi-data-transfer-download"></span> Baixar todo o histórico
-                @if (action.Success is not null)
-                {
-                    if (action.Success.Value)
-                    {
-                        <span class="oi oi-check"></span>
-                    }
-                    else
-                    {
-                        <span class="oi oi-circle-x"></span>
-                    }
-                }
-                else if (action.Processing)
-                {
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                }
-            </button>
-        </Content>
-    </ReCAPTCHA>
-</div>
 
 <Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)" />
 
