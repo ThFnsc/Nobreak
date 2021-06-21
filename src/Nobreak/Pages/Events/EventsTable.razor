@@ -1,0 +1,51 @@
+﻿@using Nobreak.Context.Entities
+
+@inject INobreakProvider _nobreak
+
+<Table Source="Uptime?.StateChanges" Virtualize="true">
+    <Head>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.PowerState" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.NobreakState.Timestamp" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.Duration" /></th>
+        <th><Name T="NobreakStateChangeViewModel" For="s=>s.OnPurpose" /></th>
+    </Head>
+    <Body Context="powerEvent">
+        <td><span class="badge badge-@(powerEvent.NobreakState.PowerState == PowerStates.Battery ? "danger" : "success")">@powerEvent.NobreakState.PowerState.GetDisplayName()</span></td>
+        <td>@powerEvent.NobreakState.Timestamp.Format() (há @powerEvent.NobreakState.TimeAgo.Format())</td>
+        <td>@powerEvent.Duration.Format()</td>
+        <td>
+            @if (powerEvent.NobreakState.PowerState == Nobreak.Context.Entities.PowerStates.Battery)
+            {
+                <button class="btn btn-sm btn-@(powerEvent.OnPurpose ? "warning" : "danger")" @onclick="()=>ToggleStateOnPurpose(powerEvent.Id)">
+                    @(powerEvent.OnPurpose ? "Acidental" : "Queda")
+                </button>
+            }
+        </td>
+    </Body>
+</Table>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthStateTask { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
+    [Parameter]
+    public UptimeReportViewModel Uptime { get; set; }
+
+    [Parameter]
+    public EventCallback ReloadValues { get; set; }
+
+    private async Task ToggleStateOnPurpose(int id)
+    {
+        var auth = await AuthStateTask;
+        if (auth.User.Identity.IsAuthenticated)
+        {
+            await _nobreak.ToggleOnPurposeAsync(id);
+            await ReloadValues.InvokeAsync();
+        }
+        else
+            Modal.Show<Login>("Login");
+    }
+}

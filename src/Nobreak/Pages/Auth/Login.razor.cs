@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Nobreak.Pages
+namespace Nobreak.Pages.Auth
 {
     public partial class Login
     {

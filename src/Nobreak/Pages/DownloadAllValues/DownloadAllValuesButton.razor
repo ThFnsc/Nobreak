@@ -1,0 +1,73 @@
+﻿@inject IOptions<AppSettings> _appSettings
+@inject IDistributedCache _cache
+@inject NavigationManager _navManager
+@inject IDbContext _context
+
+<div>
+    <ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
+        <Content Context="action">
+            <button @onclick="action.Submit" class="btn btn-warning">
+                <span class="oi oi-data-transfer-download"></span> 
+                Baixar todo o histórico
+                @if(_expectedSizeMB is not null)
+                {
+                    <span class="text-muted mr-2">~@(_expectedSizeMB.Value.ToString("0.00")) MB</span>
+                }
+                @if (action.Success is not null)
+                {
+                    if (action.Success.Value)
+                    {
+                        <span class="oi oi-check"></span>
+                    }
+                    else
+                    {
+                        <span class="oi oi-circle-x"></span>
+                    }
+                }
+                else if (action.Processing)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+            </button>
+        </Content>
+    </ReCAPTCHA>
+</div>
+
+@code {
+    private static int _avgRecordsPerMB = 162037;
+
+    private static float? _expectedSizeMB;
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lastId = await _context.NobreakStates
+            .OrderByDescending(s => s.Id)
+            .Select(s=>s.Id)
+            .FirstOrDefaultAsync();
+        _expectedSizeMB = lastId / (float)_avgRecordsPerMB;
+    }
+
+    private async Task DownloadValues()
+    {
+        if (_appSettings.Value.RequireLoginToDownloadValues && !(await AuthStateTask).User.Identity.IsAuthenticated)
+        {
+            Modal.Show<Login>("Login");
+            return;
+        }
+        var guid = RandomNumberGeneratorExtensions.RandomBase64Url();
+        await _cache.SetStringAsync(guid, guid, new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
+        });
+        _navManager.NavigateTo($"/DownloadValues", true, new
+        {
+            Token = guid
+        });
+    }
+}

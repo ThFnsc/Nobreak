@@ -1,0 +1,27 @@
+﻿@page "/Events"
+
+@inject INobreakProvider _nobreak
+@inject IMapper _mapper
+
+<div class="p-3">
+    <h2>Uptimes</h2>
+    <UptimeCards Uptime="_uptime"/>
+    <h2 class="mt-4">Eventos</h2>
+</div>
+<EventsTable ReloadValues="Reload" Uptime="_uptime"/>
+
+<Timer Elapsed="Reload" Enabled="true" Interval="TimeSpan.FromSeconds(1)" />
+
+@code {
+    private UptimeReportViewModel _uptime;
+
+    private async Task Reload()
+    {
+        var uptime = await _nobreak.GetUptimeReportAsync();
+        _uptime = _mapper.Map<UptimeReportViewModel>(uptime);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override Task OnInitializedAsync() =>
+        Reload();
+}

@@ -21,7 +21,7 @@
     private RecaptchaState _state = new RecaptchaState { Processing = false, Success = null };
 
     [Parameter]
-    public Func<Task> OnAuthorized { get; set; }
+    public EventCallback OnAuthorized { get; set; }
 
     [Parameter]
     public bool AllowIgnoreIfNotReady { get; set; }
@@ -44,9 +44,9 @@
             _state.Success = success;
             _state.Processing = false;
             if (success)
-                await OnAuthorized();
+                await OnAuthorized.InvokeAsync();
         }
         else if (AllowIgnoreIfNotReady)
-            await OnAuthorized();
+            await OnAuthorized.InvokeAsync();
     }
 }

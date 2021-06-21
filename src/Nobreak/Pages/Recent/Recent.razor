@@ -2,32 +2,6 @@
 
 @inject INobreakProvider _nobreak
 @inject IMapper _mapper
-@inject IDistributedCache _cache
-@inject NavigationManager _navManager
-@inject IOptions<AppSettings> _appSettings
-
-<ReCAPTCHA OnAuthorized="DownloadValues" AllowIgnoreIfNotReady="true">
-    <Content Context="action">
-        <button @onclick="action.Submit" class="btn btn-warning float-right m-2">
-            <span class="oi oi-data-transfer-download"></span> Baixar todo o histórico
-            @if (action.Success is not null)
-            {
-                if (action.Success.Value)
-                {
-                    <span class="oi oi-check"></span>
-                }
-                else
-                {
-                    <span class="oi oi-circle-x"></span>
-                }
-            }
-            else if (action.Processing)
-            {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            }
-        </button>
-    </Content>
-</ReCAPTCHA>
 
 <Table Source="_states" Virtualize="true">
     <Head>
@@ -55,12 +29,6 @@
 @code {
     private List<NobreakStateViewModel> _states = new();
 
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    [CascadingParameter]
-    public IModalService Modal { get; set; }
-
     private async Task Reload()
     {
         var recentValues = await _nobreak.GetRecentValuesAsync();
@@ -70,22 +38,4 @@
 
     protected override Task OnInitializedAsync() =>
         Reload();
-
-    private async Task DownloadValues()
-    {
-        if (_appSettings.Value.RequireLoginToDownloadValues && !(await authenticationStateTask).User.Identity.IsAuthenticated)
-        {
-            Modal.Show<Login>("Login");
-            return;
-        }
-        var guid = RandomNumberGeneratorExtensions.RandomBase64Url();
-        await _cache.SetStringAsync(guid, guid, new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
-        });
-        _navManager.NavigateTo($"/DownloadValues", true, new
-        {
-            Token = guid
-        });
-    }
 }
