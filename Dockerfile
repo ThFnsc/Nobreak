@@ -23,4 +23,5 @@ COPY --from=publish /app/publish/??-??* .
 COPY --from=publish /app/publish/[^Nobreak]*.dll .
 COPY --from=publish /app/publish/wwwroot ./wwwroot
 COPY --from=publish /app/publish .
+HEALTHCHECK  --interval=5s --timeout=2s CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
 ENTRYPOINT dotnet Nobreak.dll
