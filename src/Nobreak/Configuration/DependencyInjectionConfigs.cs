@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nobreak.Infra.Services;
 using Nobreak.Infra.Services.Serial;
+using Microsoft.AspNetCore.Components.Server.Circuits;
+using Nobreak.Helpers;
 
 namespace Nobreak.Configuration
 {
@@ -11,6 +13,7 @@ namespace Nobreak.Configuration
         public static IServiceCollection AddDependencyInjectionConfigs(this IServiceCollection services)
         {
             services.AddScoped<INobreakProvider, NobreakLogic>();
+            services.AddSingleton<CircuitHandler, LogCircuits>();
 
             services.AddHostedService(provider =>
             {
