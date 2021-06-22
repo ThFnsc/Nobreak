@@ -1,0 +1,27 @@
+﻿@using System.Linq.Expressions
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+
+@typeparam T
+
+<span @attributes="AdditionalAttributes">@_name</span>
+
+@code {
+    [Parameter]
+    public Expression<Func<T, object>> For { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Expression ex = For.Body;
+        if (ex is UnaryExpression ue)
+            ex = ue.Operand;
+        var expression = ex as MemberExpression;
+        var value = expression.Member.GetCustomAttribute<DisplayAttribute>();
+        _name = value?.Name ?? expression.Member.Name ?? "";
+    }
+
+    private string _name;
+}

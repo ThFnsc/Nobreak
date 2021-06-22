@@ -1,0 +1,74 @@
+﻿@inject IDbContext _context
+@inject NavigationManager _navManager
+@inject IDistributedCache _cache
+
+<ReCAPTCHA OnAuthorized="CheckLogin" AllowIgnoreIfNotReady="true">
+    <Content Context="recaptcha">
+        <EditForm Model="_loginModel" OnValidSubmit="recaptcha.Submit">
+            <DataAnnotationsValidator />
+            @if (_errorMessage is not null)
+            {
+                <div class="alert alert-danger">@_errorMessage</div>
+            }
+            @if (recaptcha.Success is not null && recaptcha.Success is not true)
+            {
+                <p class="text-danger">Não foi possível confirmar que você não é um robô 🤖</p>
+            }
+            <div class="form-group">
+                <label><Name T="LoginModel" For="m => m.Email" /></label>
+                <InputText id="email" class="form-control" @bind-Value="_loginModel.Email" />
+                <ValidationMessage For="@(() => _loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label><Name T="LoginModel" For="m => m.Password" /></label>
+                <InputText type="password" id="password" class="form-control" @bind-Value="_loginModel.Password" />
+                <ValidationMessage For="@(() => _loginModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block my-2">
+                Entrar
+                @if (recaptcha.Processing)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+            </button>
+        </EditForm>
+    </Content>
+</ReCAPTCHA>
+
+@code {
+    private LoginModel _loginModel = new();
+
+    private string _errorMessage;
+
+    private async Task CheckLogin()
+    {
+        var user = await _context.Accounts
+            .OfEmail(_loginModel.Email)
+            .FirstOrDefaultAsync();
+
+        if (user is null && !await _context.Accounts.AnyAsync())
+        {
+            user = new Context.Entities.Account(_loginModel.Email, _loginModel.Email, _loginModel.Password);
+            _context.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
+        if (user is not null && user.PasswordHash == _loginModel.Password)
+        {
+            var token = RandomNumberGeneratorExtensions.RandomBase64Url();
+            await _cache.SetStringAsync(token, user.Id.ToString(), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10)
+            });
+            _navManager.NavigateTo($"/Authorize", true, new
+            {
+                Token = token,
+                ReturnUrl = new Uri(_navManager.Uri).PathAndQuery
+            });
+        }
+        else
+        {
+            _errorMessage = "Combinação de usuário e senha não reconhecida";
+        }
+    }
+}

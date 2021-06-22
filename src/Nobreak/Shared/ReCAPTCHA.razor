@@ -1,0 +1,52 @@
+﻿@using Nobreak.Infra.Services.ReCaptcha
+@inject IReCaptchaValidator _recaptcha
+@inject IJSRuntime _js
+
+@if (_recaptcha.Ready)
+{
+    var url = $"https://www.google.com/recaptcha/api.js?render={_recaptcha.SiteKey}";
+    <ScriptLoader Src="@url" />
+}
+@if(_recaptcha.Ready || AllowIgnoreIfNotReady)
+{
+    @Content(_state)
+}
+
+@code {
+    public class RecaptchaState { public Func<Task> Submit { get; set; } public bool Processing { get; set; } public bool? Success { get; set; } }
+
+    [Parameter]
+    public RenderFragment<RecaptchaState> Content { get; set; }
+
+    private RecaptchaState _state = new RecaptchaState { Processing = false, Success = null };
+
+    [Parameter]
+    public EventCallback OnAuthorized { get; set; }
+
+    [Parameter]
+    public bool AllowIgnoreIfNotReady { get; set; }
+
+    public string Action { get; set; } = "login";
+
+    protected override void OnInitialized()
+    {
+        _state.Submit = Submit;
+    }
+
+    public async Task Submit()
+    {
+        if (_recaptcha.Ready)
+        {
+            _state.Processing = true;
+            _state.Success = null;
+            var token = await _js.InvokeAsync<string>("getRecaptchaToken", _recaptcha.SiteKey, Action);
+            var success = await _recaptcha.PassedAsync(token.ToString(), Action);
+            _state.Success = success;
+            _state.Processing = false;
+            if (success)
+                await OnAuthorized.InvokeAsync();
+        }
+        else if (AllowIgnoreIfNotReady)
+            await OnAuthorized.InvokeAsync();
+    }
+}

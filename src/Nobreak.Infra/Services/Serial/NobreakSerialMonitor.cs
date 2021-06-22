@@ -1,41 +1,41 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO.Ports;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nobreak.Context.Entities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using System.Threading;
-using Nobreak.Infra.Context.Entities;
 using Nobreak.Infra.Context;
+using Nobreak.Infra.Context.Entities;
+using System;
+using System.IO.Ports;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nobreak.Infra.Services.Serial
 {
     public class NobreakSerialMonitor : TimedHostedService, IDisposable
     {
-        private readonly AppSettings _appSettings;
         private readonly ILogger<NobreakSerialMonitor> _logger;
         private readonly SerialPort _serial;
         private readonly IServiceProvider _serviceProvider;
 
-        public NobreakSerialMonitor(ILogger<NobreakSerialMonitor> logger, IServiceProvider serviceProvider, IOptions<AppSettings> appSettings) : base(logger)
+        public NobreakSerialMonitor(ILogger<NobreakSerialMonitor> logger, IServiceProvider serviceProvider, string serialPortOverride, int? bauldRateOverride) : base(logger)
         {
-            _appSettings = appSettings.Value;
             _logger = logger;
             _serviceProvider = serviceProvider;
 
             var serialPorts = SerialPort.GetPortNames();
-            _logger.LogInformation("Portas seriais encontradas: {SerialPorts}", string.Join(", ", serialPorts));
-            var chosenSerialPort = _appSettings.SerialPort ?? serialPorts.LastOrDefault();
+            _logger.LogInformation("Serial ports found: {SerialPorts}", string.Join(", ", serialPorts));
+
+            var chosenSerialPort = serialPortOverride is not null && serialPorts.Contains(serialPortOverride)
+                ? serialPortOverride
+                : serialPorts.LastOrDefault();
+
             if (string.IsNullOrWhiteSpace(chosenSerialPort))
-                _logger.LogWarning("Nenhuma porta serial escolhida/encontrada");
+                _logger.LogWarning("No serial port found");
             else
             {
-                _logger.LogInformation("Porta serial escolhida: {SerialPort}", chosenSerialPort);
-                _serial = new SerialPort(chosenSerialPort, _appSettings.BauldRate ?? 9600);
+                _logger.LogInformation("Chosen serial port: {SerialPort}", chosenSerialPort);
+                _serial = new SerialPort(chosenSerialPort, bauldRateOverride ?? 9600);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Nobreak.Infra.Services.Serial
             }
             catch (Exception e)
             {
-                throw new Exception($"Não foi possível conectar na porta {_serial.PortName}: {e.Message}", e);
+                throw new Exception($"Could not connect to port {_serial.PortName}: {e.Message}", e);
             }
         }
 

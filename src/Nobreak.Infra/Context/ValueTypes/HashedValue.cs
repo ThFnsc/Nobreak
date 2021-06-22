@@ -10,7 +10,7 @@ namespace System.Security.Cryptography
         private readonly byte[] _salt;
         private readonly byte[] _hash;
 
-        private HashedValue(byte[] salt, byte[] hash, KeyDerivationPrf algorithm) 
+        private HashedValue(byte[] salt, byte[] hash, KeyDerivationPrf algorithm)
         {
             _salt = salt;
             _hash = hash;
@@ -29,7 +29,8 @@ namespace System.Security.Cryptography
                 return null;
             if (!Enum.TryParse(parts[0], out KeyDerivationPrf algorithm))
                 return null;
-            var base64 = parts.Skip(1).Select(p => {
+            var base64 = parts.Skip(1).Select(p =>
+            {
                 try
                 {
                     return Convert.FromBase64String(p);
@@ -64,7 +65,7 @@ namespace System.Security.Cryptography
             return new HashedValue(salt, hash, algorithm);
         }
 
-        private static byte[] HashValue(string value, byte[] salt, KeyDerivationPrf algorithm, int bytes=64) =>
+        private static byte[] HashValue(string value, byte[] salt, KeyDerivationPrf algorithm, int bytes = 64) =>
             KeyDerivation.Pbkdf2(value, salt, algorithm, 10000, bytes);
 
         public bool Check(string value)
@@ -83,8 +84,8 @@ namespace System.Security.Cryptography
             return false;
         }
 
-        public static implicit operator HashedValue(string valueToHash)=>FromValue(valueToHash);
-        public static implicit operator string(HashedValue hashedValue)=>hashedValue.ToString();
+        public static implicit operator HashedValue(string valueToHash) => FromValue(valueToHash);
+        public static implicit operator string(HashedValue hashedValue) => hashedValue.ToString();
 
         public static bool operator ==(HashedValue hashedValue, string value) => hashedValue.Equals(value);
         public static bool operator !=(HashedValue hashedValue, string value) => !hashedValue.Equals(value);
@@ -95,7 +96,7 @@ namespace System.Security.Cryptography
         public override string ToString() =>
             $"{_algorithm}:{Convert.ToBase64String(_salt)}:{Convert.ToBase64String(_hash)}";
 
-        public override int GetHashCode()=>
+        public override int GetHashCode() =>
             HashCode.Combine(_algorithm, _salt, _hash);
     }
 }

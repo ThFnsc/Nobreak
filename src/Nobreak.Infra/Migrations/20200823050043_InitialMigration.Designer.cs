@@ -8,7 +8,7 @@ using Nobreak.Infra.Context;
 
 namespace Nobreak.Migrations
 {
-    [DbContext(typeof(DataContect))]
+    [DbContext(typeof(DataContext))]
     [Migration("20200823050043_InitialMigration")]
     partial class InitialMigration
     {

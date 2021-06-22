@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Nobreak.Tests
 {
@@ -23,10 +22,10 @@ namespace Nobreak.Tests
                 {TimeSpan.FromDays(365.25)
                     .Add(TimeSpan.FromDays(8))
                     .Add(TimeSpan.FromHours(12))
-                    .Add(TimeSpan.FromMinutes(54.5)), "1y 1w 1d 12h 54m 30s" },
+                    .Add(TimeSpan.FromMinutes(54.5)), "1y 1w" },
             };
 
-            var converted = values.Select(v => new KeyValuePair<string, string>(v.Key.Format(), v.Value)).ToList();
+            var converted = values.Select(v => new KeyValuePair<string, string>(v.Key.Format(2), v.Value)).ToList();
             foreach (var kvp in converted)
                 Assert.AreEqual(kvp.Key, kvp.Value);
         }

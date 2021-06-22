@@ -7,15 +7,15 @@ using Nobreak.Infra.Context;
 
 namespace Nobreak.Migrations
 {
-    [DbContext(typeof(DataContect))]
+    [DbContext(typeof(DataContext))]
     partial class NobreakContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.7");
 
             modelBuilder.Entity("Nobreak.Context.Entities.Account", b =>
                 {
@@ -25,7 +25,7 @@ namespace Nobreak.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(767)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -39,6 +39,10 @@ namespace Nobreak.Migrations
                         .HasColumnType("datetime");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Timestamp");
 
                     b.ToTable("Accounts");
                 });
@@ -59,7 +63,7 @@ namespace Nobreak.Migrations
                         .HasColumnType("float");
 
                     b.Property<byte>("LoadPercentage")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<float>("TemperatureC")
                         .HasColumnType("float");
@@ -75,8 +79,7 @@ namespace Nobreak.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Timestamp")
-                        .IsUnique();
+                    b.HasIndex("Timestamp");
 
                     b.ToTable("NobreakStates");
                 });
@@ -87,11 +90,11 @@ namespace Nobreak.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("NobreakStateId")
+                    b.Property<long?>("NobreakStateId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("OnPurpose")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime");
@@ -100,6 +103,8 @@ namespace Nobreak.Migrations
 
                     b.HasIndex("NobreakStateId");
 
+                    b.HasIndex("Timestamp");
+
                     b.ToTable("NobreakStateChanges");
                 });
 
@@ -107,9 +112,9 @@ namespace Nobreak.Migrations
                 {
                     b.HasOne("Nobreak.Context.Entities.NobreakState", "NobreakState")
                         .WithMany()
-                        .HasForeignKey("NobreakStateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NobreakStateId");
+
+                    b.Navigation("NobreakState");
                 });
 #pragma warning restore 612, 618
         }

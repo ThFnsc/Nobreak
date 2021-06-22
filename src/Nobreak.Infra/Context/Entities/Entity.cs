@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Nobreak.Context.Entities
 {
+    [Index(nameof(Timestamp))]
     public abstract class Entity
     {
         public long Id { get; set; }
@@ -13,7 +12,7 @@ namespace Nobreak.Context.Entities
 
         public Entity()
         {
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
     }
 }

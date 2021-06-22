@@ -1,0 +1,60 @@
+﻿@page "/"
+@namespace Nobreak.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nobreak</title>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="Nobreak.styles.css" rel="stylesheet" />
+    <script async src="~/js/site.js"></script>
+    <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
+</head>
+<body class="bg-dark text-white">
+    <component type="typeof(App)" render-mode="Server" />
+
+    @*https://docs.microsoft.com/en-us/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-3.1&pivots=server#reflect-the-connection-state-in-the-ui*@
+    <div id="components-reconnect-modal" class="my-reconnect-modal components-reconnect-hide">
+        <div class="show p-5">
+            <h1>Conexão com o servidor perdida. Tentando reconectar</h1>
+            <div class="spinner-grow" role="status"></div>
+        </div>
+        <div class="failed p-5">
+            <h1>Não foi possível reestabelecer uma conexão com o servidor</h1>
+            <button onclick="location.reload()" class="btn btn-primary btn-lg mt-2">Recarregar</button>
+        </div>
+        <div class="rejected p-5">
+            <h1>Conexão reestabelecida! Recarregando...</h1>
+            <a href="javascript:location.reload()" class="mt-2">Clique aqui caso o recarregamento automático não funcionar</a>
+            <br />
+            <div class="spinner-grow" role="status"></div>
+        </div>
+    </div>
+
+    <div id="blazor-error-ui">
+        <div class="alert alert-danger pb-3">
+            <environment include="Staging,Production">
+                Um erro ocorreu. Pode ser que a aplicação não responda novamente até recarregar a página
+            </environment>
+            <environment include="Development">
+                Um erro ocorreu. Acesse as ferramentas de desenvolvedor para mais detalhes
+            </environment>
+            <a href="" class="reload btn btn-danger btn-sm float-right">Recarregar</a>
+        </div>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/Blazored.Modal/blazored.modal.js"></script>
+    <script>
+        Blazor.defaultReconnectionHandler._reconnectCallback = function () { document.location.reload(); };
+    </script>
+</body>
+</html>

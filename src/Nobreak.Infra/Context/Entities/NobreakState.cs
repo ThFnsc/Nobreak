@@ -6,7 +6,7 @@ namespace Nobreak.Context.Entities
 {
     public class NobreakState : Entity
     {
-        private static readonly Regex Q1Res = new Regex(@"\((\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*) (\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*)");
+        private static readonly Regex _q1Res = new Regex(@"\((\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*) (\d*.\d*) (\d*.\d*) (\d*.\d*) (\d*)");
 
         public float VoltageIn { get; set; }
 
@@ -35,9 +35,9 @@ namespace Nobreak.Context.Entities
             set
             {
                 if (value == PowerStates.Grid)
-                    Extras = (byte)(Extras & 0b01111111);
+                    Extras = (byte) (Extras & 0b01111111);
                 else
-                    Extras = (byte)(Extras | 0b10000000);
+                    Extras = (byte) (Extras | 0b10000000);
             }
         }
 
@@ -58,18 +58,18 @@ namespace Nobreak.Context.Entities
 
         public static NobreakState FromSerialResponse(string response)
         {
-            var match = Q1Res.Match(response);
+            var match = _q1Res.Match(response);
             if (!match.Success)
                 throw new Exception("Porta serial não retornou com o formato esperado");
             return new NobreakState
             {
                 VoltageIn = float.Parse(match.Groups[1].Value),
-                VoltageOut = float.Parse(match.Groups[3].Value)*2,
+                VoltageOut = float.Parse(match.Groups[3].Value) * 2,
                 LoadPercentage = byte.Parse(match.Groups[4].Value),
                 FrequencyHz = float.Parse(match.Groups[5].Value),
                 BatteryVoltage = float.Parse(match.Groups[6].Value),
                 TemperatureC = float.Parse(match.Groups[7].Value),
-                Extras = Convert.ToByte(match.Groups[8].Value,2)
+                Extras = Convert.ToByte(match.Groups[8].Value, 2)
             };
         }
 

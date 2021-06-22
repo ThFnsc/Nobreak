@@ -1,0 +1,33 @@
+﻿@inherits LayoutComponentBase
+@inject IDbContext _context
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        @if (_noUsers)
+        {
+            <div class="alert alert-warning m-4">Nenhum usuário cadastrado ainda. <button class="btn btn-warning" @onclick="SignUp">Cadastrar</button></div>
+        }
+        @Body
+    </div>
+</div>
+
+@code {
+    private bool _noUsers;
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _noUsers = !await _context.Accounts.AnyAsync();
+    }
+
+    private void SignUp()
+    {
+        Modal.Show<Login>("Cadastro");
+    }
+}

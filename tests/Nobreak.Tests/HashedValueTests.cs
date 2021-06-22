@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+using Nobreak.Infra.Extensions;
+using System;
 using System.Linq;
 using System.Security.Cryptography;
-using System;
 
 namespace Nobreak.Tests
 {
@@ -17,7 +17,7 @@ namespace Nobreak.Tests
         }
 
         private string RandomString() =>
-            Infra.Services.Helpers.RandomBase64(_random.Next(10, 32));
+            RandomNumberGeneratorExtensions.RandomBase64Url(_random.Next(10, 32));
 
         [TestMethod]
         public void ShouldPredictEqualitiesCorrectly()
@@ -29,7 +29,7 @@ namespace Nobreak.Tests
 
             foreach (var password1 in randomStrings)
                 foreach (var password2 in randomStrings)
-                    Assert.IsTrue((HashedValue)password1 == password2 == (password1 == password2));
+                    Assert.IsTrue((HashedValue) password1 == password2 == (password1 == password2));
         }
 
         [TestMethod]

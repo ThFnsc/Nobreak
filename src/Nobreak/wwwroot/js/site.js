@@ -1,15 +1,26 @@
-﻿function loadTo(url, element) {
-    fetch(url)
-        .then(res => {
-            if (res.ok)
-                return res.text();
-            else
-                $(element).html('<div class="alert alert-danger">Erro buscando o conteúdo :/</div>');
-        })
-        .then(body =>
-            $(element).html(body));
+﻿var loadedScripts = {};
+
+function loadScript(scriptPath) {
+    return new Promise(function (resolve, reject) {
+        if (loadedScripts[scriptPath])
+            return resolve();
+        var script = document.createElement("script");
+        script.src = scriptPath;
+        script.type = "text/javascript";
+        loadedScripts[scriptPath] = true;
+
+        script.onload = resolve;
+
+        script.onerror = reject;
+
+        document["body"].appendChild(script);
+    });
 }
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function getRecaptchaToken(siteKey, action) {
+    return new Promise((resolve, reject) =>
+        grecaptcha.ready(() =>
+            grecaptcha.execute(siteKey, { action })
+                .then(resolve)
+                .catch(reject)));
 }
